@@ -1,0 +1,107 @@
+/* widgets */
+.dashboard-links {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr));
+	gap: var(--padding-medium);
+}
+.dashboard-link {
+	background-color: var(--card-background);
+	box-shadow: var(--card-shadow);
+	border: 1px solid transparent;
+	padding: 1.25rem var(--line-gap-header);
+	text-align: center;
+	text-decoration: none;
+	border-radius: .375em;
+	color: var(--heading-color);
+	line-height: 1.25;
+	isolation: isolate;
+	position: relative;
+	transition: border-color .1s, color .1s;
+}
+.dashboard-link-ico {
+	font-size: 3.5em;
+	color: var(--link-color);
+}
+.dashboard-link-title {
+	margin: .375rem 0 0;
+	font-size: 1.25rem;
+	font-weight: 600;
+}
+.dashboard-link-description {
+	color: var(--body-color);
+	margin-top: 0.375rem;
+}
+.dashboard-link:hover {
+	color: var(--link-color);
+	border-color: var(--link-color);
+	/* box-shadow: var(--card-shadow); */
+}
+
+.dashboard-links-horizontal .dashboard-link {
+	display: grid;
+	grid-template-columns: auto 1fr;
+	gap: var(--line-gap);
+	text-align: left;
+	align-items: center;
+}
+.dashboard-links-horizontal .dashboard-link-title {
+	margin: 0;
+}
+
+@media (pointer: fine) {
+	.dashboard-link::before {
+		content: '';
+		position: absolute;
+		inset: 0;
+		border-radius: inherit;
+		background-attachment: fixed;
+		background-image: radial-gradient(circle at var(--x, 0) var(--y, 0), var(--link-light-bg), transparent 8rem);
+		z-index: -1;
+		pointer-events: none;
+		opacity: 0;
+		transition: opacity .1s;
+	}
+	.dashboard-link:hover::before {
+		opacity: 1;
+	}
+}
+
+/* props table */
+.infoTable {
+	width: 100%;
+	border: 1px solid var(--border);
+	border-radius: 0.375em;
+	overflow: hidden;
+	border-spacing: 0;
+	line-height: 1.25;
+}
+.infoTable th {
+	text-align: left;
+}
+.infoTable :is(th, td):not(:last-child) {
+	border-right: 1px solid var(--border);
+}
+.infoTable td {
+	border-top: 1px solid var(--border);
+}
+.infoTable :is(th, td) {
+	padding: .5rem .75rem;
+}
+.infoTable thead {
+	background: var(--link-light-bg);
+}
+.infoTable tr:hover {
+	background: var(--link-lighter-bg);
+}
+.infoTable-copy {
+	cursor: pointer;
+}
+.infoTable-copy {
+	width: 10rem;
+}
+.infoTable-type, .infoTable-default {
+	width: 6rem;
+}
+.infoTable-copy:hover {
+	color: var(--link-color);
+}

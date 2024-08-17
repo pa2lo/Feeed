@@ -1,0 +1,29 @@
+@import './reset.css';
+@import './base.css';
+/*@import './2fa.css'; 2FA jetstream*/
+@import './buttons.css';
+@import './cards.css';
+@import './modals.css';
+@import './inputs.css';
+@import './messages.css';
+@import './datatable.css';
+@import './tooltip.css';
+@import './dropdown.css';
+@import './accordion.css';
+@import './pagination.css';
+@import './tabs.css';
+@import './widgets.css';
+@import './tags.css';
+@import './loader.css';
+@import './animations.css';
+@import './print.css';
+
+[x-cloak] {
+    display: none;
+}
+
+.logo-text {
+	font-weight: 900;
+	line-height: 2.5rem;
+	font-size: 2rem;
+}

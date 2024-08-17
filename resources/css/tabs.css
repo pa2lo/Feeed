@@ -1,0 +1,140 @@
+.tabs-cont {
+	position: relative;
+}
+.tabs-cont:not(.line):not(:first-child) {
+	margin-top: calc(var(--line-gap) - .625rem);
+}
+.card-header + .card-body > .tabs-cont:not(.line):first-child {
+	margin-top: calc(var(--line-gap) * -1);
+}
+
+.tabs-cont.isBordered {
+	border-bottom: 1px solid var(--border);
+}
+.tabs-cont.isBordered .tabs {
+	margin-bottom: -1px;
+}
+.tabs-cont.isBordered .tabs-underline {
+	padding-bottom: 1px;
+}
+
+.tabs {
+	overflow: auto;
+	scrollbar-width: none;
+	scroll-behavior: smooth;
+	position: relative;
+}
+.tabs::-webkit-scrollbar {
+	display: none;
+}
+
+/* tab */
+.tabs-underline .tab, .tabs-outline .tab {
+	--tab-color-default: var(--heading-color);
+	--tab-color-hover: var(--link-color);
+}
+.tabs-underline .tab {
+	--tab-border-active: transparent transparent var(--link-color) transparent;
+	--tab-shadow-active: 0 1px 0 var(--link-color);
+}
+.tabs-outline .tab {
+	--tab-border-active: var(--border) var(--border) transparent var(--border);
+	--tab-shadow-active: 0 1px 0 var(--card-background);
+	--tab-background-active: var(--card-background);
+	--tab-radius: 0.25em 0.25em 0 0;
+}
+.tabs-pill .tab {
+	--tab-color-hover: var(--heading-color);
+	--tab-color-active: var(--link-color);
+	--tab-background-hover: color-mix(in srgb, var(--link-color) 14%, var(--card-background) 86%);
+	--tab-radius: 0.25em;
+}
+.tab {
+	--tab-color: var(--tab-color-default);
+	background: var(--tab-background, transparent);
+	border: 1px solid;
+	border-color: var(--tab-border, transparent);
+	cursor: pointer;
+	justify-content: center;
+	border-radius: var(--tab-radius, 0);
+	margin: 0;
+	padding: 0.65625rem 1em;
+	color: var(--tab-color);
+	gap: 0.375em;
+	white-space: nowrap;
+	font-weight: 600;
+	transition: color .1s, opacity .1s, box-shadow .1s, background-color .1s, border-color .1s;
+}
+
+.tab-inner {
+	display: contents;
+}
+.tab-icon {
+	font-size: 1.25em;
+	margin-block: 0.1em;
+	display: block;
+	margin-left: -0.25em;
+}
+
+/* states */
+.tab:where(:not(.isDisabled)):hover {
+	--tab-color: var(--tab-color-hover);
+	background: var(--tab-background-hover, var(--tab-background, transparent));
+}
+.tab.isDisabled {
+	cursor: not-allowed;
+	opacity: 0.6;
+}
+.tab.isActive {
+	--tab-color: var(--tab-color-active, var(--tab-color-hover));
+	background: var(--tab-background-active, var(--tab-background-hover, var(--tab-background, transparent)));
+	border-color: var(--tab-border-active, transparent);
+	box-shadow: var(--tab-shadow-active, none);
+}
+
+/* drag */
+.tabs-cont.isDragging::after {
+	content: '';
+	z-index: 1;
+	inset: 0;
+	position: fixed;
+	display: block;
+	cursor: grab;
+}
+.tabs-cont.isDragging .tabs {
+	scroll-behavior: auto;
+}
+.tabs-cont.isDragging .tab {
+	user-select: none;
+	pointer-events: none;
+}
+
+.tab-panels {
+	transition: height .15s;
+}
+
+/* arrows */
+.tabs-arrow {
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	width: 2.5rem;
+	display: flex;
+	align-items: center;
+	background-color: var(--card-background);
+}
+.tabs-cont.isBordered .tabs-arrow {
+	bottom: -1px;
+	border-bottom: 1px solid transparent;
+}
+.tabs-arrow-left {
+	left: max(-2rem, var(--padding-card) * -1 + 0.75rem);
+	-webkit-mask-image: linear-gradient(to left, transparent, black 0.5rem);
+	mask-image: linear-gradient(to left, transparent, black 0.5rem);
+}
+.tabs-arrow-right {
+	justify-content: flex-end;
+	right: max(-2rem, var(--padding-card) * -1 + 0.5rem);
+	-webkit-mask-image: linear-gradient(to right, transparent, black 0.5rem);
+	mask-image: linear-gradient(to right, transparent, black 0.5rem);
+}

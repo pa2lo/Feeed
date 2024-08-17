@@ -1,0 +1,52 @@
+.tags-row {
+	display: flex;
+	flex-flow: row wrap;
+	gap: .25rem .375rem;
+}
+
+.tag {
+	display: inline-flex;
+	font-size: .8125rem;
+	padding: .375rem .625rem;
+	border-radius: .1875rem;
+	border: 1px solid var(--message-border);
+	background-color: var(--message-background);
+	color: var(--message-color);
+	line-height: .875rem;
+	gap: .375rem;
+	align-items: center;
+}
+.tag-icon {
+	font-size: 1rem;
+	margin: -.0625rem;
+	transition: opacity .1s;
+}
+
+.tag:not(:hover) .tag-x {
+	opacity: 0.6;
+}
+
+.tag-primary {
+	--accent: var(--primary);
+}
+.tag-secondary {
+	--accent: var(--secondary);
+}
+.tag-heading {
+	--accent: var(--heading-color);
+	--accent-contrast: var(--input-background);
+}
+.tag-link {
+	--accent: var(--link-color);
+	--accent-contrast: var(--input-background);
+}
+
+.filter-tags-cont:not(:first-child) {
+	margin-top: 0.75rem;
+}
+.filter-tags {
+	margin: -0.125rem;
+}
+.filter-tags > .tag, .input-checked-options > .tag {
+	margin: 0.125rem;
+}

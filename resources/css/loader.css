@@ -1,0 +1,29 @@
+.loader-cont {
+	position: relative;
+}
+
+.loader {
+	flex-direction: column;
+	position: absolute;
+	inset: 0;
+	z-index: 5;
+	background: var(--card-background);
+	background: color-mix(in srgb, var(--card-background) 60%, transparent);
+	cursor: wait;
+}
+
+.loader-spinner::before {
+	content: '';
+	display: block;
+	margin: auto;
+	width: 4rem;
+	height: 4rem;
+	border: 0.175em solid var(--heading-color);
+	border-radius: 2em;
+	border-bottom-color: transparent;
+	animation: rotate 1s linear infinite;
+}
+
+.loader-text {
+	margin-top: calc(var(--line-gap) - .25rem);
+}

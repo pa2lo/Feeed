@@ -1,0 +1,31 @@
+@media print {
+	body {
+		background-color: #fff;
+		--line-gap: .875rem;
+	}
+	h1, .likeH1 {
+		font-size: 1.875rem;
+	}
+	.authenticated-layout {
+		padding: 0;
+	}
+	main.page-main {
+		margin-top: 0 !important;
+	}
+	.menu-toggler, .authenticated-header .ico-button, .table-buttons, .card-footer-buttons, .dataTable-col-buttons, .card-header-cont > h3 {
+		display: none;
+	}
+	.dataTable-th, .dataTable-col {
+		height: auto;
+	}
+
+	.card-footer {
+		margin-bottom: 0;
+		padding-bottom: 0;
+	}
+	.card {
+		padding: 0;
+		background: transparent;
+		box-shadow: none;
+	}
+}

@@ -1,0 +1,71 @@
+{
+	"name": "Feeed",
+	"short_name": "Feeed",
+	"icons": [
+		{
+			"src": "/img/logo.svg",
+			"sizes": "150x150",
+			"type": "image/svg+xml",
+			"purpose": "maskable"
+		},
+		{
+			"src": "/img/logo.svg",
+			"sizes": "150x150",
+			"type": "image/svg+xml",
+			"purpose": "any"
+		},
+		{
+			"src": "/img/logo512.png",
+			"sizes": "512x512",
+			"type": "image/png",
+			"purpose": "maskable"
+		},
+		{
+			"src": "/img/logo512.png",
+			"sizes": "512x512",
+			"type": "image/png",
+			"purpose": "any"
+		},
+		{
+			"src": "/img/logo480.png",
+			"sizes": "480x480",
+			"type": "image/png",
+			"purpose": "maskable"
+		},
+		{
+			"src": "/img/logo480.png",
+			"sizes": "480x480",
+			"type": "image/png",
+			"purpose": "any"
+		},
+		{
+			"src": "/img/logo192.png",
+			"sizes": "192x192",
+			"type": "image/png",
+			"purpose": "maskable"
+		},
+		{
+			"src": "/img/logo192.png",
+			"sizes": "192x192",
+			"type": "image/png",
+			"purpose": "any"
+		}
+	],
+	"scope": "/",
+	"start_url": "/",
+	"display": "standalone",
+	"orientation": "any",
+	"background_color": "#FFFFFF",
+	"theme_color": "#FFFFFF",
+	"description": "PWA Feeed",
+	"dir": "ltr",
+	"lang": "sk",
+	"categories": [
+		"utilities"
+	],
+	"id": "p2l_feeed",
+	"launch_handler": {
+		"client_mode": "navigate-existing"
+	},
+	"prefer_related_applications": false
+}

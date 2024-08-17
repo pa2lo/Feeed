@@ -1,0 +1,62 @@
+@keyframes rotate {
+	from {transform: rotate(0deg);}
+	to {transform: rotate(360deg);}
+}
+@keyframes toastcountdown {
+	from {right: 0%;}
+	to {right: 100%;}
+}
+
+.modal-enter-active, .modal-leave-active {
+	transition: opacity 0.25s ease-in;
+	overflow: hidden;
+}
+:is(.modal-enter-active, .modal-leave-active) .modal-card {
+	transition: scale .25s ease-in, opacity .25s ease-in;
+}
+
+.toast-move, .toast-enter-active, .toast-leave-active,
+.checked-options-move, .checked-options-enter-active, .checked-options-leave-active,
+.tabs-enter-active, .tabs-leave-active {
+	transition: all .15s ease-in;
+}
+.fade-enter-active, .fade-leave-active {
+	transition: all .1s ease-in;
+}
+
+.modal-enter-from, .modal-leave-to,
+.toast-enter-from, .toast-leave-to,
+.tabs-enter-from, .tabs-leave-to,
+.fade-enter-from, .fade-leave-to,
+.checked-options-enter-from, .checked-options-leave-to {
+	opacity: 0;
+}
+
+.checked-options-enter-from, .checked-options-leave-to {
+	scale: 0;
+}
+.modal-enter-from .modal-card {
+	scale: 1.2;
+}
+.modal-leave-to .modal-card {
+	scale: .75;
+}
+
+.toast-enter-from, .toast-leave-to {
+	transform: translateX(100%);
+}
+
+.toast-leave-active,
+.checked-options-leave-active {
+	position: absolute;
+}
+
+.slide-toggle-enter-active, .slide-toggle-leave-active {
+	transition: .25s linear;
+	overflow: hidden;
+}
+.slide-toggle.slide-toggle-enter-from, .slide-toggle.slide-toggle-leave-to {
+	grid-template-rows: 0fr;
+	opacity: 0;
+	margin-block: 0;
+}

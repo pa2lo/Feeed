@@ -1,0 +1,54 @@
+.tooltip-cont {
+	display: inline-block;
+}
+
+.tooltip {
+	--line-gap: .25rem;
+	--tt-offset-y: 0.25rem;
+	position: absolute;
+	color: #fff;
+	background-color: #000c;
+	/* color: var(--light, #fff) var(--dark, #000); */
+	/* background-color: var(--light, #000c) var(--dark, #fffe); */
+	padding: 0.375rem 0.625rem;
+	font-size: 0.8125rem;
+	line-height: 0.9375rem;
+	border-radius: 0.25em;
+	z-index: 20;
+	left: 0;
+	top: 0;
+	text-align: center;
+	transform: translateX(
+		clamp(
+			min(var(--tt-ww) - 100% - .5rem, -50% + var(--tt-l) + var(--tt-w)/2),
+			(var(--tt-l) + var(--tt-w)/2 + 50% + .5rem - var(--tt-ww)) * -10000,
+			max(var(--tt-l) + var(--tt-w)/2 - 50%, .5rem)
+		)
+	) translateY(
+		clamp(
+			var(--tt-ofTop) - 100% - .3125rem,
+			(var(--tt-t) - 100% - .5rem) * -10000,
+			var(--tt-ofTop) + var(--tt-h) + .3125rem
+		)
+	);
+	pointer-events: none;
+}
+.tooltip::before {
+	content: '';
+	position: absolute;
+	inset: -0.375rem 0;
+	z-index: -2;
+}
+.tooltip.isHoverable {
+	pointer-events: auto;
+}
+
+.tooltip-narrow {
+	max-width: 8rem;
+}
+.tooltip-normal {
+	max-width: 15rem;
+}
+.tooltip-wide {
+	max-width: 22rem;
+}

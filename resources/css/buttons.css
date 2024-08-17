@@ -1,0 +1,213 @@
+.buttons-row {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.5em;
+	align-items: center;
+}
+.buttons-row .line {
+	margin-top: 0;
+}
+
+.ico-button, .button {
+	--accent: var(--primary);
+	--accent-contrast: var(--primary-contrast);
+
+	background-color: var(--button-background, transparent);
+	color: var(--button-text);
+
+	cursor: pointer;
+	vertical-align: top;
+
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	text-align: center;
+	gap: .5em;
+
+	margin: 0;
+	position: relative;
+
+	font: inherit;
+	font-weight: 600;
+	text-decoration: none;
+
+	border: 1px solid var(--button-border, transparent);
+	border-radius: 0.25em;
+	transition: background-color .1s, opacity .1s;
+}
+
+.button {
+	--padding-v: 0.75em;
+	--padding-h: 1.75em;
+	--icon-offset: -.4375rem;
+
+	padding: var(--padding-v) var(--padding-h);
+}
+
+.ico-button {
+	padding: 0;
+	height: 2rem;
+	width: 2rem;
+	border-radius: 1rem;
+	opacity: var(--button-opacity, 1);
+}
+.ico-button-ico {
+	font-size: 1.25rem;
+}
+.ico-button.isTransparent {
+	--button-opacity: 0.7;
+}
+.ico-button:is(.isHighlighted, .isLoading) {
+	--button-opacity: 1;
+	--button-background-hover: var(--button-background);
+}
+.ico-button.isInvisible {
+	--button-opacity: 0;
+	pointer-events: none;
+}
+
+.button-compact {
+	--padding-v: 0.40625rem;
+	--padding-h: 1em;
+	--icon-offset: -.1875rem;
+}
+.button-bigger {
+	font-size: 1rem;
+}
+
+.button.iconOnly {
+	padding-inline: var(--padding-v);
+}
+.button-ico {
+	--icon-margin: 0.1em;
+	font-size: 1.25em;
+	margin-block: var(--icon-margin);
+}
+.button-ico.isBig {
+	font-size: 1.5em;
+	--icon-margin: 0em;
+}
+.button-ico:first-child {
+	margin-left: var(--icon-offset);
+}
+.button-ico:last-child {
+	margin-right: var(--icon-offset);
+}
+.button.iconOnly .button-ico {
+	margin-inline: var(--icon-margin);
+}
+
+.button-solid {
+	--button-text: var(--accent-contrast);
+	--button-background: var(--accent);
+	--button-background-hover: color-mix(in srgb, var(--accent), #000 13%);
+}
+.button-plain {
+	--button-background-outline-mix: var(--card-background);
+}
+.button-outline {
+	--button-background: var(--input-background);
+	--button-border: var(--accent);
+}
+.button-outline, .button-plain {
+	--button-text: var(--accent);
+	--button-background-hover: color-mix(in srgb, var(--button-background-outline-mix, var(--input-background)), var(--button-text) 14%);
+}
+
+.button.isFull {
+	width: 100%;
+}
+
+/* states */
+:is(.button, .ico-button):not(.isDisabled, .isLoading):active {
+	background-color: var(--button-background-hover);
+	--button-opacity: 1;
+}
+@media (pointer: fine) {
+	:is(.button, .ico-button):not(.isDisabled, .isLoading):hover {
+		background-color: var(--button-background-hover);
+		--button-opacity: 1;
+	}
+}
+
+:is(.button, .ico-button):focus {
+	outline: transparent;
+}
+:is(.button, .ico-button):focus-visible {
+	box-shadow: 0 0 0.625rem -0.3125rem var(--accent);
+}
+
+.ico-button.isHighlighted {
+	cursor: default;
+}
+:is(.button, .ico-button).isLoading {
+	color: transparent;
+	cursor: wait;
+}
+:is(.button, .ico-button).isDisabled {
+	cursor: not-allowed;
+	opacity: 0.6;
+}
+
+:is(.button, .ico-button).isLoading::after {
+	content: '';
+	position: absolute;
+	inset: 0;
+	margin: auto;
+	width: 1.5em;
+	height: 1.5em;
+	border: 0.1875em solid var(--button-text);
+	border-radius: 2em;
+	border-bottom-color: transparent;
+	animation: rotate 1s linear infinite;
+}
+
+/* colors */
+.button-primary {
+	--accent: var(--primary);
+}
+.button-secondary {
+	--accent: var(--secondary);
+}
+.button-info {
+	--accent: var(--info-color);
+}
+.button-warning {
+	--accent: var(--warn-color);
+}
+.button-danger {
+	--accent: var(--danger-color);
+}
+.button-success {
+	--accent: var(--success-color);
+}
+.button-heading {
+	--accent: var(--heading-color);
+	--accent-contrast: var(--input-background);
+}
+.button-link {
+	--accent: var(--link-color);
+	--accent-contrast: var(--input-background);
+}
+
+/* buttons group */
+.buttons-group > .button:not(:last-child) {
+	border-top-right-radius: 0;
+	border-bottom-right-radius: 0;
+}
+.buttons-group > .button:not(:first-child) {
+	border-top-left-radius: 0;
+	border-bottom-left-radius: 0;
+	margin-left: -1px;
+}
+
+.buttons-group-center {
+	justify-content: center;
+}
+.buttons-group-right {
+	justify-content: flex-end;
+}
+
+.buttons-group.isFull > .button {
+	flex: 1 1 auto;
+}

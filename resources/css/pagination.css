@@ -1,0 +1,38 @@
+.pagination-container {
+	gap: 0.75rem 1rem;
+}
+
+.pagination-link {
+	--button-text: var(--heading-color);
+	--button-background-hover: color-mix(in srgb, var(--card-background), var(--button-text) 14%);
+
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	color: var(--button-text);
+	padding: 0.40625rem;
+	min-width: 2rem;
+	height: 2rem;
+	text-align: center;
+	text-decoration: none;
+	border-radius: 2rem;
+	background-color: transparent;
+	transition: background-color .1s, color .1s;
+}
+.pagination-link .icon-tabler {
+	font-size: 1.125rem;
+	display: block;
+}
+
+.pagination-link.active {
+	--button-text: var(--link-color);
+}
+.pagination-link:is(.active, :hover, :active) {
+	background-color: var(--button-background-hover);
+}
+.pagination-link:is(.active, .noAction) {
+	pointer-events: none;
+}
+.pagination-link.noAction {
+	opacity: 0.5;
+}

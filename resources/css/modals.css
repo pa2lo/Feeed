@@ -1,0 +1,77 @@
+body:has(.modal-backdrop) {
+	overflow: hidden;
+	/* width: 100vw; */
+	/* padding-right: calc(100vw - 100%); */
+}
+
+.modal-backdrop {
+	position: fixed;
+	inset: 0;
+	flex-direction: column;
+	-webkit-backdrop-filter: blur(.25em);
+	backdrop-filter: blur(.25em);
+	overflow: auto;
+	overscroll-behavior: none;
+	background: var(--modal-backdrop);
+	padding: var(--padding-big) var(--padding-big-inline);
+	z-index: 20;
+	scrollbar-gutter: stable;
+}
+
+.modal-card {
+	--card-shadow: var(--card-shadow-dark);
+	margin: auto;
+	position: relative;
+}
+
+.modal-header {
+	padding-right: 1.375rem;
+}
+
+.modal-button {
+	position: absolute;
+	right: calc(var(--padding-card) - 0.625rem);
+	top: calc(var(--padding-card) - 0.0625rem);
+}
+.modal-card:not(:has(.card-header)) .modal-button {
+	top: calc(var(--padding-card) - 0.3125rem);
+}
+
+.modal-dialog-icon {
+    font-size: 6em;
+    line-height: 0;
+}
+.modal-dialog-title {
+	margin-top: 0.75rem;
+}
+.modal-dialog-text {
+	margin-top: 0.5rem;
+}
+.modal-dialog-buttons {
+	gap: 0.5em;
+	justify-content: center;
+}
+.modal-dialog-button {
+	flex: 1 1 3rem;
+	max-width: 10em;
+}
+
+/* image preview */
+.modal-image-preview-img {
+	border-radius: inherit;
+}
+.modal-image-preview-info {
+	position: absolute;
+	inset: auto var(--line-gap) var(--line-gap) var(--line-gap);
+	background-color: color-mix(in srgb, var(--card-background) 80%, transparent);
+	border-radius: 2rem;
+	padding: 0.125rem 0.125rem 0.125rem 0.875em;
+	gap: 0.25em;
+	right: var(--line-gap);
+	max-width: fit-content;
+}
+.modal-image-preview-title {
+	flex: 1;
+	line-height: 1rem;
+	word-break: break-all;
+}
