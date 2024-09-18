@@ -269,9 +269,6 @@ img {
 	pointer-events: none;
 	border: 1px solid var(--background);
 }
-.loadInlineVideo:not(.videoLoaded)::after {
-	pointer-events: auto;
-}
 
 .postLink-info {
 	padding: 0.75rem;
@@ -296,46 +293,10 @@ img {
 	text-decoration: none;
 }
 
-/* .postImage {
-	position: relative;
-	max-width: 500px;
-} */
 .postImage-video {
 	display: block;
 	max-width: 100%;
 	height: auto;
-}
-.postImage-videoIco {
-	font-size: 4rem;
-	position: absolute;
-	top: calc(50% - 2rem);
-	left: calc(50% - 2rem);
-	border-radius: 2rem;
-	color: #fff;
-	background: #0006;
-	box-shadow: 0 0 1rem #0006;
-	pointer-events: none;
-}
-:is(.videoLoaded, .videoLoading) > .postImage-videoIco {
-	display: none;
-}
-.videoLoaded::after {
-	pointer-events: none;
-}
-.videoLoading::before {
-	content: '';
-	display: block;
-	width: 4rem;
-	height: 4rem;
-	position: absolute;
-	top: calc(50% - 2rem);
-	left: calc(50% - 2rem);
-	border: 0.375rem solid #fff;
-	border-color: transparent #fff;
-	border-radius: 2rem;
-	filter: drop-shadow(0 0 .5rem #000);
-	z-index: 1;
-	animation: loader 1s linear infinite;
 }
 
 .postMeta, .postMeta-link, .postMeta-linkInner {

@@ -134,10 +134,7 @@ function renderLink(linkClass = '', link = '', content) {
 function renderImage(image, ratio, imgClass = 'postImage-img', alt = '') {
 	if (!image) return;
 
-	let width = 500;
-	let height = ratio ? 500 / eval(ratio) : 500;
-
-	return `<img class="${imgClass}" src="${image}" width="${width}" height="${height}" loading="lazy" alt="${alt}" />`;
+	return `<img class="${imgClass}" src="${image}" width="${500}" height="${ratio ? 500 / eval(ratio) : 500}" loading="lazy" alt="${alt}" />`;
 }
 function renderPost(post) {
 	if (renderedPosts.includes(post.network_id)) return;
@@ -153,9 +150,10 @@ function renderPost(post) {
 		</div>
 		${post.content?.text ? `<div class="postText">${post.content.text}</div>` : ''}
 		${post.type == 'image' ? renderLink('postImage-link', post?.content?.network_link, renderImage(post?.content?.image, post?.content?.['aspect-ratio'] ?? null)) : ''}
-		${post.type == 'video' ? `<div class="postImage-link loadInlineVideo" data-url="${post?.content?.video}">
-			${renderImage(post?.content?.thumbnail, post?.content?.['aspect-ratio'] ?? null)}
-			<svg class="ico postImage-videoIco"><use href="#i-play" /></svg>
+		${post.type == 'video' ? `<div class="postImage-link postImage-linkVideo" data-url="${post?.content?.video}">
+			<video class="postImage-video" controls width="500" height="${500 / eval(post?.content?.['aspect-ratio'])}" poster="${post?.content?.thumbnail}" preload="none">
+				<source src="${post?.content?.video}" />
+			</video>
 		</div>` : ''}
 		${post.type == 'link' && post.content?.link ? renderLink('postLink', post.content.link, `
 			${post.content?.meta?.['twitter:image'] ? renderImage(post.content.meta['twitter:image']) : ''}
@@ -182,6 +180,10 @@ function renderPost(post) {
 		</div>`, { id: post.network_id }
 	);
 	postsContainer.append($post);
+
+	if (post.type == 'video') $post.querySelector('video').addEventListener('play', function(e) {
+		videoIntersectionObserver.observe(e.target)
+	}, {once: true});
 
 	renderedPosts.push(post.network_id);
 }
@@ -296,34 +298,6 @@ clearFilter.forEach(el => {
 		applyFilter([], []);
 	});
 });
-
-document.addEventListener('click', function(e) {
-	if (e.target.classList.contains('loadInlineVideo') && !e.target.classList.contains('videoLoading') && !e.target.classList.contains('videoLoaded')) {
-		let target = e.target;
-		let img = target.querySelector('.postImage-img');
-
-		let video = makeElement('video', 'postImage-video', `<source src="${target.dataset.url}" />`, {
-			controls: true,
-			width: img.getAttribute('width') ?? '',
-			height: img.getAttribute('height') ?? '',
-			autoplay: true,
-			playsInline: true,
-			webkitPlaysinline: true
-		});
-		video.addEventListener('play', () => {
-			img.replaceWith(video);
-			videoIntersectionObserver.observe(video);
-		}, {once: true});
-
-		video.addEventListener('loadstart', () => {
-			e.target.classList.add('videoLoading');
-		})
-		video.addEventListener('playing', () => {
-			e.target.classList.remove('videoLoading');
-			e.target.classList.add('videoLoaded');
-		})
-	}
-})
 
 // videoIntersectionObserver
 let videoIntersectionObserver = new IntersectionObserver((entries) => {

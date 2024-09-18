@@ -179,8 +179,8 @@ function onKeyUp() {
 	isOpen.value ? focusPrevOption() : toggleList()
 }
 
-function onFocusout(e) {
-	if (!isOpen.value || (e.relatedTarget && [inputEl.value, listboxEl.value].some(el => el.contains(e.relatedTarget))) || document.activeElement == inputEl.value) return
+function onFocusout(e, isDropdown) {
+	if (!isOpen.value || (e.relatedTarget && [inputEl.value, listboxEl.value].some(el => el.contains(e.relatedTarget))) || (isDropdown && document.activeElement == inputEl.value)) return
 	isOpen.value = false
 }
 function onInputBlur(e) {
@@ -217,7 +217,7 @@ function afterEnter() {
 			@keydown.space.prevent="onKeySpace"
 			@keydown.enter.prevent="onKeySpace"
 			@keydown.esc="isOpen = false"
-			@focusout="onFocusout"
+			@focusout="onFocusout($event, false)"
 		>
 			<Transition name="fade" mode="out-in">
 				<span v-if="(!model && !options.some(o => o.value == model)) || (isMulti && !model.length)" class="input-placeholder">{{ placeholder }}</span>
@@ -255,7 +255,7 @@ function afterEnter() {
 						'--dd-ofTop': coords.ofTop
 					}"
 					tabindex="-1"
-					@focusout="onFocusout"
+					@focusout="onFocusout($event, true)"
 					@click.self="focusInputEl()"
 				>
 					<li v-if="searchable" class="input-select-search-cont">
