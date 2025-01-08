@@ -25,7 +25,11 @@ const props = defineProps({
 	highlighted: Boolean,
 	invisible: Boolean,
 	transparent: Boolean,
-	download: Boolean
+	download: {
+		type: Boolean,
+		default: null
+	},
+	circle: Boolean
 })
 
 const isBasicLink = typeof props.link == "string" && ['https://', 'http://', '#'].some(l => props.link?.startsWith(l))
@@ -36,7 +40,7 @@ const isBasicLink = typeof props.link == "string" && ['https://', 'http://', '#'
 		:is="link ? (isBasicLink || download) ? 'a' : Link : 'button'"
 		:href="link ? getHref(link, linkParam) : null"
 		:type="link ? null : type"
-		class="ico-button clickable"
+		class="ico-button"
 		:class="[
 			`button-${color}`,
 			`button-${variant}`,
@@ -45,11 +49,12 @@ const isBasicLink = typeof props.link == "string" && ['https://', 'http://', '#'
 				isLoading: loading,
 				isInvisible: invisible,
 				isTransparent: transparent,
-				isHighlighted: highlighted
+				isHighlighted: highlighted,
+				isCircle: circle
 			}
 		]"
-		:disabled="disabled || loading"
-		:download="download"
+		:disabled="disabled || loading ? 'disabled' : null"
+		:download="download ? '' : null"
 	>
 		<Icon class="ico-button-ico" :name="icon" />
 	</component>

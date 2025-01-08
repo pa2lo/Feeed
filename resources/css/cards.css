@@ -47,6 +47,7 @@
 .card-footer-text {
 	text-align: left;
 	flex: 1;
+	max-width: fit-content;
 }
 .card-footer-buttons {
 	width: auto;
@@ -73,6 +74,7 @@
 	.card-footer-text {
 		text-align: center;
 		width: 100%;
+		max-width: unset;
 	}
 	.card-footer-buttons {
 		margin-left: 0;

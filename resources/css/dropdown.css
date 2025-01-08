@@ -122,6 +122,23 @@
 	margin-right: -0.125rem;
 }
 
+.dropdown-text-empty, .dropdown-search {
+	padding: .5rem 0;
+	margin-bottom: -.5em;
+}
+
+.dropdown-search::after {
+	content: '';
+	display: block;
+	margin: auto;
+	width: 2em;
+	height: 2em;
+	border: 0.1875em solid var(--heading-color);
+	border-radius: 2em;
+	border-bottom-color: transparent;
+	animation: rotate 1s linear infinite;
+}
+
 .dropdown-menu hr {
 	margin: var(--line-gap) 0;
 	height: 0;

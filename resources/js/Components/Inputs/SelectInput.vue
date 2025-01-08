@@ -21,8 +21,29 @@ const props = defineProps({
 	},
 	options: Array,
 	allowEmpty: Boolean,
+	showCount: Boolean,
 	searchable: Boolean,
-	showCount: Boolean
+	searchableFields: {
+		type: Array,
+		default: []
+	},
+	searchPlaceholder: {
+		type: String,
+		default: txt('Search...')
+	},
+	loading: Boolean,
+	onSearch: {
+		type: Function,
+		default: null
+	},
+	noItemsText: {
+		type: String,
+		default: txt('no items')
+	},
+	searchThrottle: {
+		tyoe: Number,
+		default: 350
+	}
 })
 
 const emit = defineEmits(['change'])
@@ -32,6 +53,7 @@ let inputID = getUUID('select')
 const inputEl = ref(null)
 const listboxEl = ref(null)
 const filterInputEl = ref(null)
+const searchInputEl = ref(null)
 const resetFilterEl = ref(null)
 
 const isMulti = typeof model.value == 'object'
@@ -88,12 +110,12 @@ function selectOption(value) {
 		else {
 			model.value.push(value)
 			requestAnimationFrame(() => setCoords())
-			emit('change')
+			emit('change', value)
 		}
 	} else {
 		model.value = value
-		isOpen.value = false
-		emit('change')
+		focusInputEl(true)
+		emit('change', value)
 	}
 }
 function deselectOption(value) {
@@ -110,11 +132,31 @@ function deselectOption(value) {
 const filter = ref('')
 const filteredOptions = computed(() => {
 	if (!filter.value && !isMulti && props.allowEmpty) return [{title: props.placeholder, value: ''}, ...props.options]
-	return props.options.filter(o => o.title.toLowerCase().includes(filter.value.toLocaleLowerCase()))
+	let fvLowercase = filter.value.toLocaleLowerCase()
+	return props.options.filter(o => o.title.toLowerCase().includes(fvLowercase) || props.searchableFields.some(key => o[key] && String(o[key]).toLocaleLowerCase().includes(fvLowercase)))
 })
 
+const hasSearchEvent = props.onSearch ? true : false
+const searchModel = ref('')
+const searchPrevValue = ref('')
+let searchTimeout = null
+function onSearchInput() {
+	clearTimeout(searchTimeout)
+	searchTimeout = setTimeout(() => {
+		if (searchPrevValue.value == searchModel.value) return
+
+		searchPrevValue.value = searchModel.value
+		emit('search', searchModel.value)
+	}, props.searchThrottle)
+}
+function resetSearch() {
+	searchModel.value = ''
+	searchPrevValue.value = ''
+	emit('search', '')
+}
+
 const availableOptions = computed(() => {
-	if (!filteredOptions.value.length) return []
+	if (props.loading || !filteredOptions.value.length) return []
 	return filteredOptions.value.filter(o => !o.disabled)
 })
 
@@ -135,7 +177,7 @@ const checkedOptions = computed(() => {
 const focusedOption = ref('')
 function scrollCurrentIntoView() {
 	requestAnimationFrame(() => {
-		listboxEl.value.querySelector('.current').scrollIntoView({
+		listboxEl.value.querySelector('.current')?.scrollIntoView({
 			block: 'nearest',
 			behavior: 'smooth'
 		})
@@ -188,12 +230,13 @@ function onInputBlur(e) {
 }
 
 function afterEnter() {
-	if (props.searchable && filterInputEl.value) filterInputEl.value.focus()
+	if (hasSearchEvent && searchInputEl.value) searchInputEl.value.focus()
+	else if (props.searchable && filterInputEl.value) filterInputEl.value.focus()
 }
 </script>
 
 <template>
-	<InputWrapper type="select" :id="inputID" :error="error">
+	<InputWrapper type="select" :error="error">
 		<div
 			ref="inputEl"
 			:id="inputID"
@@ -216,7 +259,7 @@ function afterEnter() {
 			@keydown.up.prevent="onKeyUp"
 			@keydown.space.prevent="onKeySpace"
 			@keydown.enter.prevent="onKeySpace"
-			@keydown.esc="isOpen = false"
+			@keydown.esc.prevent="isOpen = false"
 			@focusout="onFocusout($event, false)"
 		>
 			<Transition name="fade" mode="out-in">
@@ -258,12 +301,29 @@ function afterEnter() {
 					@focusout="onFocusout($event, true)"
 					@click.self="focusInputEl()"
 				>
-					<li v-if="searchable" class="input-select-search-cont">
+					<li v-if="hasSearchEvent" class="input-select-search-cont">
+						<input
+							ref="searchInputEl"
+							class="input-select-search"
+							type="text"
+							:placeholder="searchPlaceholder"
+							v-model="searchModel"
+							@keydown.tab.prevent="focusInputEl()"
+							@keydown.esc.prevent="focusInputEl(true)"
+							@keydown.down.prevent="onKeyDown"
+							@keydown.up.prevent="onKeyUp"
+							@keydown.enter.prevent="onKeySpace"
+							@blur="onInputBlur"
+							@input="onSearchInput"
+						/>
+						<button v-if="searchModel.length" ref="resetFilterEl" class="input-select-search-x" type="button" @click.prevent="resetSearch"><Icon name="x" /></button>
+					</li>
+					<li v-else-if="searchable" class="input-select-search-cont">
 						<input
 							ref="filterInputEl"
 							class="input-select-search"
 							type="text"
-							placeholder="Filter"
+							:placeholder="searchPlaceholder"
 							v-model="filter"
 							@keydown.tab.prevent="focusInputEl()"
 							@keydown.esc.prevent="focusInputEl(true)"
@@ -274,19 +334,24 @@ function afterEnter() {
 						/>
 						<button v-if="filter.length" ref="resetFilterEl" class="input-select-search-x" type="button" @click.prevent="filter = ''"><Icon name="x" /></button>
 					</li>
-					<SelectInputOption
-						v-for="option in filteredOptions"
-						:id="`listitem-${inputID}-${option.value}`"
-						:checked="isMulti ? model.some(v => v == option.value) : model == option.value"
-						:disabled="option.disabled"
-						:current="focusedOption == option.value"
-						:value="option.value"
-						@mouseenter="() => focusedOption = option.value"
-						@mousedown.prevent="selectOption(option.value)"
-					>
-						<slot name="option" :option="option">{{ option.title }}</slot>
-					</SelectInputOption>
-					<li v-if="!filteredOptions.length && filter.length" class="dropdown-text-empty">No results for "{{ filter }}"</li>
+					<li v-if="loading" class="dropdown-search flex aj-c"></li>
+					<template v-else>
+						<SelectInputOption
+							v-for="option in filteredOptions"
+							:id="`listitem-${inputID}-${option.value}`"
+							:checked="isMulti ? model.some(v => v == option.value) : model == option.value"
+							:disabled="option.disabled"
+							:current="focusedOption == option.value"
+							:value="option.value"
+							@mouseenter="() => focusedOption = option.value"
+							@mousedown.prevent="selectOption(option.value)"
+						>
+							<slot name="option" :option="option">{{ option.title }}</slot>
+						</SelectInputOption>
+						<li v-if="!options.length && !searchPrevValue && !filter" class="dropdown-text-empty">{{ noItemsText }}</li>
+						<li v-else-if="!filteredOptions.length && searchPrevValue.length" class="dropdown-text-empty">No results for "{{ searchPrevValue }}"</li>
+						<li v-else-if="!filteredOptions.length && filter.length" class="dropdown-text-empty">No results for "{{ filter }}"</li>
+					</template>
 				</ul>
 			</Transition>
 		</Teleport>

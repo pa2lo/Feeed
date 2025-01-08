@@ -11,11 +11,12 @@ const props = defineProps({
 	linkParam: [String, Number],
 	disabled: Boolean,
 	checked: Boolean,
-	closeable: Boolean,
+	keepOpen: Boolean,
 	color: {
 		tyoe: String,
 		default: 'heading'
-	}
+	},
+	download: Boolean
 })
 
 const isBasicLink = typeof props.link == "string" && ['https://', 'http://', '#'].some(l => props.link?.startsWith(l))
@@ -30,16 +31,16 @@ function onLeave(e) {
 
 <template>
 	<component
-		:is="link ? isBasicLink ? 'a' : Link : 'button'"
+		:is="link ? (isBasicLink || download) ? 'a' : Link : 'button'"
 		:href="link ? getHref(link, linkParam) : null"
 		:type="link ? null : 'button'"
-		class="dropdown-link flex ai-c clickable"
+		class="dropdown-link flex ai-c"
 		:class="[
 			`dropdown-link-${color}`,
 			{
 				isChecked: checked,
 				isDisabled: disabled,
-				isCloseableLink: closeable
+				isCloseableLink: !keepOpen
 			}
 		]"
 		@mouseenter="onEnter"

@@ -30,7 +30,10 @@ const props = defineProps({
 	loading: Boolean,
 	bigIcon: Boolean,
 	full: Boolean,
-	download: Boolean
+	download: {
+		type: Boolean,
+		default: null
+	}
 })
 
 const isBasicLink = typeof props.link == "string" && ['https://', 'http://', '#'].some(l => props.link?.startsWith(l))
@@ -53,8 +56,8 @@ const isBasicLink = typeof props.link == "string" && ['https://', 'http://', '#'
 				iconOnly: (icon || iconRight) && !($slots.default || label)
 			}
 		]"
-		:disabled="disabled || loading"
-		:download="download"
+		:disabled="disabled || loading ? 'disabled' : null"
+		:download="download ? '' : null"
 	>
 		<Icon v-if="icon" class="button-ico" :class="{isBig: bigIcon}" :name="icon" />
 		<span v-if="$slots.default || label" class="button-text">
@@ -62,6 +65,6 @@ const isBasicLink = typeof props.link == "string" && ['https://', 'http://', '#'
 				{{ label }}
 			</slot>
 		</span>
-		<Icon v-if="iconRight" class="button-ico" :name="iconRight" />
+		<Icon v-if="iconRight" class="button-ico" :class="{isBig: !icon && bigIcon}" :name="iconRight" />
 	</component>
 </template>

@@ -705,7 +705,7 @@ class FeedController extends Controller
 					if ($extLink && $postData['type'] != 'video') {
 						$postData['type'] = 'link';
 						parse_str(parse_url($extLink->getAttribute('href'))['query'], $parsedLink);
-						$linkHref = $parsedLink ? $parsedLink['u'] : $extLink->getAttribute('href');
+						$linkHref = isset($parsedLink, $parsedLink['u']) ? $parsedLink['u'] : $extLink->getAttribute('href');
 
 						$content['link'] = $linkHref;
 						if ($extLink->hasAttribute('aria-label')) $content['title'] = $extLink->getAttribute('aria-label');
@@ -750,15 +750,20 @@ class FeedController extends Controller
 						$strippedStr = explode("}", explode("\"video_id\":\"$postID\",\"is_live_stream", $strippedStr)[1])[0];
 
 						preg_match('/sd_src_no_ratelimit":"(.*?)"/', $strippedStr, $sdSrc);
+						if (!$sdSrc) preg_match('/sd_src":"(.*?)"/', $strippedStr, $sdSrc);
+						if (!$sdSrc) preg_match('/hd_src":"(.*?)"/', $strippedStr, $sdSrc);
 						preg_match('/aspect_ratio":(.*?),/', $strippedStr, $aspectRatio);
-						$content['video'] = $this->getFBImageURI(stripslashes($sdSrc[1]));
+
+						$content['video'] = isset($sdSrc[1]) ? $this->getFBImageURI(stripslashes($sdSrc[1])) : '';
 						$content['aspect-ratio'] = $aspectRatio[1];
 						$content['thumbnail'] = $this->getFBImageURI($post->findOne('.mtm ._53j5 ._1p6f.img')->getAttribute('src'), true);
 					}
 					// image
 					else if ($post->findOneOrFalse('.mtm ._2l7q ._1p6f.img')) {
 						$postData['type'] = 'image';
-						$content['image'] = $this->getFBImageURI($post->findOne('.mtm ._2l7q ._1p6f.img')->getAttribute('src'), true);
+						$postImage = $post->findOne('.mtm ._2l7q ._1p6f.img');
+						$content['image'] = $this->getFBImageURI($postImage->getAttribute('src'), true);
+						if ($postImage->hasAttribute('width') && $postImage->hasAttribute('height')) $content['aspect-ratio'] = $postImage->getAttribute('width') / $postImage->getAttribute('height');
 					}
 					// gallery
 					else if ($post->findMultiOrFalse('._xcx')) {

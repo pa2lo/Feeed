@@ -60,13 +60,13 @@ const iconMap = {
 </script>
 
 <template>
-	<div class="toast flex ai-c" :class="[`toast-${type}`, {'clickable': onClick}]" @click.prevent="handleClick" @mouseenter="pauseCountdown" @mouseleave="resumeCountdown">
+	<div class="toast flex ai-c" :class="[`toast-${type}`, {isClickable: onClick}]" @click.prevent="handleClick" @mouseenter="pauseCountdown" @mouseleave="resumeCountdown">
 		<Icon class="toast-ico" :name="iconMap[type]" />
 		<div class="toast-text">
 			<div class="toast-text-title" v-html="title"></div>
 			<div v-if="message" class="toast-text-message" v-html="message"></div>
 		</div>
-		<div class="toast-close clickable flex aj-c" @click.stop="closeToast">
+		<div class="toast-close isClickable flex aj-c" @click.stop="closeToast">
 			<Icon name="x" />
 		</div>
 		<div v-if="isCountdown" :style="{'--countdown': `${timeout}ms`}" class="toast-countdown"></div>

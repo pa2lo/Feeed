@@ -1,6 +1,6 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
-import { getUUID } from '@/Utils/helpers'
+import { getUUID, txt } from '@/Utils/helpers'
 
 import { toast } from '@/Utils/toaster'
 
@@ -28,7 +28,8 @@ const props = defineProps({
 	},
 	chars: Number,
 	min: [String, Number],
-	max: [String, Number]
+	max: [String, Number],
+	trim: Boolean
 })
 
 const inputID = getUUID('text')
@@ -52,7 +53,7 @@ async function copy() {
 
 	inputEl.value.setSelectionRange(0, 99999)
 	await navigator.clipboard.writeText(model.value).then(() => {
-		toast.success('Copied to clipboard')
+		toast.success(txt('Copied to clipboard'))
 		copied.value = true
 		setTimeout(() => {
 			copied.value = false
@@ -65,11 +66,15 @@ function getPlaceholderByType() {
 	if (props.type == 'date') return '30.03.2024'
 	if (props.type == 'datetime-local') return '30.03.2024, 12:30'
 }
-const placeholder = !props.placeholder && ['date', 'time', 'datetime-local'].includes(props.type) ? getPlaceholderByType() : props.placeholder
+const placeholder = computed(() => !props.placeholder && ['date', 'time', 'datetime-local'].includes(props.type) ? getPlaceholderByType() : props.placeholder)
 
 defineExpose({
 	focus: () => inputEl.value.focus()
 })
+
+function onBlur() {
+	if (props.trim && model.value.trim() != model.value) model.value = model.value.trim()
+}
 </script>
 
 <template>
@@ -97,13 +102,14 @@ defineExpose({
 			:size="chars"
 			ref="inputEl"
 			v-model="model"
+			@blur="onBlur"
 		/>
 		<div v-if="clearable || copyable || ['password', 'date', 'datetime-local', 'time'].includes(type)" class="input-buttons flex">
-			<IcoButton v-if="type == 'date' || type == 'datetime-local'" class="ico-date-picker" transparent icon="calendar" v-tooltip="'Select date'" @click.prevent="$refs.inputEl.showPicker()" />
-			<IcoButton v-if="type == 'time'" transparent icon="clock" class="ico-clock-picker" v-tooltip="'Select time'" @click.prevent="$refs.inputEl.showPicker()" />
-			<IcoButton v-if="copyable && model?.length" transparent :icon="copied ? 'check' : 'copy'" :invisible="!model?.length" v-tooltip="copied ? 'Copied' : 'Copy'" :highlighted="copied" :color="copied ? 'success' : 'heading'" @click.prevent="copy" />
-			<IcoButton v-if="clearable" transparent icon="x" v-tooltip="'Clear'" :invisible="!model?.length" @click.prevent="model = ''" />
-			<IcoButton v-if="type == 'password'" tabindex="-1" transparent :icon="!showPassword ? 'eye' : 'eye-off'" v-tooltip="showPassword ? 'Hide password' : 'Show password'" :invisible="!model?.length" @click.prevent="showPassword = !showPassword" />
+			<IcoButton v-if="clearable" transparent icon="x" v-tooltip="'Clear'" :invisible="!model?.length || disabled || readOnly" @click.prevent="model = ''" />
+			<IcoButton v-if="type == 'password'" tabindex="-1" transparent :icon="!showPassword ? 'eye' : 'eye-off'" v-tooltip="showPassword ? txt('Hide password') : txt('Show password')" :invisible="!model?.length" @click.prevent="showPassword = !showPassword" />
+			<IcoButton v-if="copyable && model?.length" transparent :icon="copied ? 'check' : 'copy'" :invisible="!model?.length" v-tooltip="copied ? txt('Copied') : txt('Copy')" :highlighted="copied" :color="copied ? 'success' : 'heading'" @click.prevent="copy" />
+			<IcoButton v-if="type == 'date' || type == 'datetime-local'" class="ico-date-picker" transparent icon="calendar" v-tooltip="txt('Select date')" @click.prevent="$refs.inputEl.showPicker()" :disabled="disabled || readOnly" />
+			<IcoButton v-if="type == 'time'" transparent icon="clock" class="ico-clock-picker" v-tooltip="txt('Select time')" @click.prevent="$refs.inputEl.showPicker()" :disabled="disabled || readOnly" />
 		</div>
 		<template v-if="$slots.default" #note><slot></slot></template>
 	</InputWrapper>

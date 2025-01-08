@@ -24,7 +24,8 @@ const props = defineProps({
 	},
 	inc: Number,
 	chars: Number,
-	suffix: String
+	suffix: String,
+	hideButtons: Boolean
 })
 
 const inputID = getUUID('number')
@@ -60,7 +61,7 @@ defineExpose({
 <template>
 	<InputWrapper type="number" :id="inputID" :error="error">
 		<label class="input-el input-number-el ai-c flex" :for="inputID" :class="{isDisabled: disabled, wError: error, isReadOnly: readOnly}">
-			<IcoButton tabindex="-1" icon="down" class="input-number-button input-number-buttonDown" :disabled="disabled || readOnly || (typeof min == 'number' && model <= min)" @click.prevent="dec" />
+			<IcoButton v-if="!hideButtons" tabindex="-1" icon="down" class="input-number-button input-number-buttonDown" :disabled="disabled || readOnly || (typeof min == 'number' && model <= min)" @click.prevent="dec" />
 			<input
 				:id="inputID"
 				class="input-number"
@@ -84,7 +85,7 @@ defineExpose({
 				v-model="model"
 			/>
 			<span v-if="suffix" class="input-number-suffix">{{ suffix }}</span>
-			<IcoButton tabindex="-1" icon="up" class="input-number-button input-number-buttonUp" :disabled="disabled || readOnly || (typeof max == 'number' && model >= max)" @click.prevent="inc" />
+			<IcoButton v-if="!hideButtons" tabindex="-1" icon="up" class="input-number-button input-number-buttonUp" :disabled="disabled || readOnly || (typeof max == 'number' && model >= max)" @click.prevent="inc" />
 		</label>
 		<template v-if="$slots.default" #note><slot></slot></template>
 	</InputWrapper>

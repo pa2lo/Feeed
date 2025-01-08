@@ -4,8 +4,12 @@
 .tabs-cont:not(.line):not(:first-child) {
 	margin-top: calc(var(--line-gap) - .625rem);
 }
-.card-header + .card-body > .tabs-cont:not(.line):first-child {
+.card-header + .card-body > .tabs-cont:not(.line):first-child,
+.tab-panels > .tab-content > .tabs-cont:not(.line):first-child {
 	margin-top: calc(var(--line-gap) * -1);
+}
+.card-body:first-child > .tabs-cont:not(.line):first-child {
+	margin-top: -0.71875rem;
 }
 
 .tabs-cont.isBordered {
@@ -26,6 +30,13 @@
 }
 .tabs::-webkit-scrollbar {
 	display: none;
+}
+
+.tabs-centered > .tab:first-child {
+	margin-left: auto;
+}
+.tabs-centered > .tab:last-child {
+	margin-right: auto;
 }
 
 /* tab */

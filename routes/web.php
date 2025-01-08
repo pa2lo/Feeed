@@ -20,6 +20,8 @@ Route::get('/getFeeds', [PostController::class, 'getFeeds']);
 Route::get('/getCategories', [PostController::class, 'getCategories']);
 Route::get('/getLastUpdate', [PostController::class, 'getLastUpdate']);
 
+Route::get('/status', [PostController::class, 'getStatus']);
+
 Route::get('/igImage', [PostController::class, 'getInstagramImage']);
 Route::get('/fbImage', [PostController::class, 'getFacebookImage']);
 

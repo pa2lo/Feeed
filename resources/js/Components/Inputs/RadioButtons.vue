@@ -13,7 +13,8 @@ const props = defineProps({
 	readOnly: Boolean,
 	error: String,
 	options: Array,
-	solid: Boolean
+	solid: Boolean,
+	sameWidth: Boolean
 })
 
 const inputName = props.name || getUUID('radio-buttons')
@@ -21,7 +22,7 @@ const inputName = props.name || getUUID('radio-buttons')
 
 <template>
 	<InputWrapper type="radio-buttons" :error="error">
-		<div class="input-el input-radio-buttons-el flex" :class="{isDisabled: disabled, wError: error, isReadOnly: readOnly, buttonsSolid: solid}">
+		<div class="input-el input-radio-buttons-el flex" :class="{isDisabled: disabled, wError: error, isReadOnly: readOnly, buttonsSolid: solid, isSameWidth: sameWidth}">
 			<label v-for="item in options" class="input-radio-button isLabel flex" :class="[`input-radio-${item.color ?? 'link'}`, {isSelected: item?.value != undefined ? item.value == model : item == model, isDisabled: !disabled && item.disabled, isReadOnly: disabled || readOnly}]" v-tooltip="!item.disabled && !disabled ? item.tooltip : ''">
 				<input
 					class="sr-only"

@@ -5,6 +5,7 @@ defineProps({
 	type: String,
 	id: String,
 	label: String,
+	labelNote: String,
 	error: String,
 	horizontal: Boolean,
 	full: Boolean,
@@ -14,7 +15,7 @@ defineProps({
 
 <template>
 	<div class="line input-wrapper" :class="[`input-${type}-wrapper`, {'input-full': full, 'input-horizontal': horizontal}]">
-		<component :is="id ? 'label' : 'div'" v-if="label" class="input-label" :for="id || null">{{ label }}</component>
+		<component :is="id ? 'label' : 'div'" v-if="label" class="input-label" :for="id || null">{{ label }}<span v-if="labelNote" class="text-light input-label-note">{{ labelNote }}</span></component>
 		<div class="input-outer flex ai-c" :class="`input-${type}-outer`">
 			<div class="input-inner" :class="[`input-${type}-inner`]">
 				<slot></slot>

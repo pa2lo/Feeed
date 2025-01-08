@@ -33,3 +33,11 @@ export function txt(label, def, params) {
 export function getHref(link, params) {
 	return !params ? link : `${link}/${params}`
 }
+
+export function downloadFile(url, filename) {
+	let a = Object.assign(document.createElement('a'), {
+		href: url,
+		download: filename
+	})
+	a.click()
+}

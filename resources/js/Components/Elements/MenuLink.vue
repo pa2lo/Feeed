@@ -23,7 +23,7 @@ let currentPath = window.location.pathname
 	<component
 		:is="link ? external ? 'a' : Link : 'button'"
 		:href="link ? link : null"
-		class="menu-link flex ai-c clickable"
+		class="menu-link flex ai-c"
 		:class="{
 			isActive: !external && link && (currentPath.startsWith(activeRoute) || currentPath == link)
 		}"

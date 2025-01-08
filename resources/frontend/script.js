@@ -42,6 +42,13 @@ function formatDate(date) {
 function makeElement(el, className, innerHTML = '', data = {}) {
 	return Object.assign(document.createElement(el), {className, innerHTML, ...data});
 }
+function evalNum(num) {
+	if (!num) return null;
+	else if (typeof num == "number" || typeof num != "string" || !num.includes('/')) return num;
+
+	let numParts = num.split('/');
+	return parseFloat(numParts[0]) / parseFloat(numParts[1]);
+}
 
 // ajax
 async function getCategories() {
@@ -134,7 +141,7 @@ function renderLink(linkClass = '', link = '', content) {
 function renderImage(image, ratio, imgClass = 'postImage-img', alt = '') {
 	if (!image) return;
 
-	return `<img class="${imgClass}" src="${image}" width="${500}" height="${ratio ? 500 / eval(ratio) : 500}" loading="lazy" alt="${alt}" />`;
+	return `<img class="${imgClass}" src="${image}" width="${500}" height="${ratio ? 500 / evalNum(ratio) : 500}" loading="lazy" alt="${alt}" />`;
 }
 function renderPost(post) {
 	if (renderedPosts.includes(post.network_id)) return;
@@ -151,7 +158,7 @@ function renderPost(post) {
 		${post.content?.text ? `<div class="postText">${post.content.text}</div>` : ''}
 		${post.type == 'image' ? renderLink('postImage-link', post?.content?.network_link, renderImage(post?.content?.image, post?.content?.['aspect-ratio'] ?? null)) : ''}
 		${post.type == 'video' ? `<div class="postImage-link postImage-linkVideo" data-url="${post?.content?.video}">
-			<video class="postImage-video" controls width="500" height="${500 / eval(post?.content?.['aspect-ratio'])}" poster="${post?.content?.thumbnail}" preload="none">
+			<video class="postImage-video" controls width="500" height="${500 / evalNum(post?.content?.['aspect-ratio'])}" poster="${post?.content?.thumbnail}" preload="none">
 				<source src="${post?.content?.video}" />
 			</video>
 		</div>` : ''}

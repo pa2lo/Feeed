@@ -125,7 +125,7 @@ function onConfirmHandler(e) {
 </script>
 
 <template>
-	<div v-if="$slots.toggler" class="dropdown-toggler clickable" :class="{isOpen: isOpen, isDisabled: disabled}" @mousedown.prevent="toggleDropdown" v-bind="$attrs" tabindex="0">
+	<div v-if="$slots.toggler" class="dropdown-toggler isClickable" :class="{isOpen: isOpen, isDisabled: disabled}" @mousedown.prevent="toggleDropdown" v-bind="$attrs" tabindex="0">
 		<slot name="toggler" />
 	</div>
 	<component v-else :is="element == 'button' ? Button : IcoButton" :class="{isOpen: isOpen, isDisabled: disabled}" class="dropdown-toggler" :icon="element == 'button' ? togglerIcon : icon" :iconRight="element == 'button' ? icon : null" @click.prevent="toggleDropdown" :disabled="disabled" v-bind="$attrs" tabindex="0" />
@@ -149,7 +149,7 @@ function onConfirmHandler(e) {
 				}"
 				tabindex="-1"
 				@keydown.tab="onTabKey"
-				@keydown.esc="() => closeDropdown(true)"
+				@keydown.esc.prevent="() => closeDropdown(true)"
 				@keydown.up.prevent="focusPrevEl"
 				@keydown.down.prevent="focusNextEl"
 				@focusout="onFocusout"

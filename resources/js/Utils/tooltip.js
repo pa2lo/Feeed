@@ -78,7 +78,7 @@ function updateTooltipContent(tooltipId) {
 }
 
 function handleEnter(e, el, tooltipId) {
-	if (!tooltipsMap[tooltipId].text) return
+	if (!tooltipsMap[tooltipId]?.text) return
 
 	const isTouch = e.pointerType == 'touch'
 	if (!tooltipsMap[tooltipId].touch && isTouch) return

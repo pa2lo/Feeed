@@ -8,11 +8,11 @@
 }
 
 .modal-enter-active, .modal-leave-active {
-	transition: opacity 0.25s ease-in;
+	transition: opacity 0.15s ease-in-out;
 	overflow: hidden;
 }
 :is(.modal-enter-active, .modal-leave-active) .modal-card {
-	transition: scale .25s ease-in, opacity .25s ease-in;
+	transition: scale .15s ease-in-out, opacity .15s ease-in-out;
 }
 
 .toast-move, .toast-enter-active, .toast-leave-active,

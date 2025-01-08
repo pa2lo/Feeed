@@ -1,6 +1,6 @@
 <script setup>
 import { ref, onMounted } from 'vue'
-import { getUUID } from '@/Utils/helpers'
+import { getUUID, txt } from '@/Utils/helpers'
 
 import { toast } from '@/Utils/toaster'
 
@@ -39,7 +39,7 @@ async function copy() {
 
 	inputEl.value.setSelectionRange(0, 99999)
 	await navigator.clipboard.writeText(model.value).then(() => {
-		toast.success('Copied to clipboard')
+		toast.success(txt('Copied to clipboard'))
 		copied.value = true
 		setTimeout(() => {
 			copied.value = false
@@ -74,7 +74,7 @@ defineExpose({
 		/>
 		<div v-if="copyable || clearable" class="input-buttons flex">
 			<IcoButton v-if="clearable" transparent icon="x" v-tooltip="'Clear'" :invisible="!model?.length" @click.prevent="model = ''" />
-			<IcoButton v-if="copyable" transparent :icon="copied ? 'check' : 'copy'" :invisible="!model?.length" v-tooltip="copied ? 'Copied' : 'Copy'" :highlighted="copied" :color="copied ? 'success' : 'heading'" @click.prevent="copy" />
+			<IcoButton v-if="copyable" transparent :icon="copied ? 'check' : 'copy'" :invisible="!model?.length" v-tooltip="copied ? txt('Copied') : txt('Copy')" :highlighted="copied" :color="copied ? 'success' : 'heading'" @click.prevent="copy" />
 		</div>
 		<template v-if="$slots.default" #note><slot></slot></template>
 	</InputWrapper>

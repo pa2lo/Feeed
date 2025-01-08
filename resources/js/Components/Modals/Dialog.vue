@@ -39,7 +39,7 @@ const props = defineProps({
 	},
 	confirmText: {
 		type: String,
-		default: 'Ok'
+		default: txt('Ok')
 	}
 })
 
@@ -49,6 +49,7 @@ function closeModal() {
 	open.value = false
 }
 function afterLeave() {
+	if (focusedEl && document.documentElement.contains(focusedEl)) focusedEl.focus({ preventScroll: true })
 	destroyDialog(props.id)
 }
 
@@ -78,10 +79,6 @@ function afterEnter() {
 	modal.value.focus({ preventScroll: true })
 }
 
-function beforeLeave() {
-	if (focusedEl && document.documentElement.contains(focusedEl)) focusedEl.focus({ preventScroll: true })
-}
-
 const iconMap = {
 	'info': 'circle-info-animated',
 	'error': 'circle-x-animated',
@@ -93,14 +90,14 @@ const iconMap = {
 
 <template>
 	<teleport to="body">
-        <Transition name="modal" appear @after-enter="afterEnter" @before-leave="beforeLeave" @after-leave="afterLeave">
-			<div v-if="open" class="modal-backdrop flex" @click.self="backdropClick" tabindex="-1" @keyup.enter="confirm" @keyup.esc="cancel">
+        <Transition name="modal" appear @after-enter="afterEnter" @after-leave="afterLeave">
+			<div v-if="open" class="modal-backdrop flex" @click.self="backdropClick" tabindex="-1" @keydown.enter.stop="confirm" @keydown.esc.stop="cancel">
 				<div ref="modal" class="card modal-card ta-c" :class="[`card-${modalWidth}`]" tabindex="-1">
 					<template v-if="image">
 						<img class="modal-image-preview-img" :src="image" alt="" />
 						<div v-if="title" class="modal-image-preview-info flex ai-c">
 							<span class="modal-image-preview-title">{{ title }}</span>
-							<IcoButton icon="external-link" title="Open in new tab" target="_blank" :link="image" />
+							<IcoButton circle icon="external-link" title="Open in new tab" target="_blank" :link="image" />
 						</div>
 					</template>
 					<div v-else class="card-body">

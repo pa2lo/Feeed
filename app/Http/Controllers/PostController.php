@@ -59,7 +59,7 @@ class PostController extends Controller
 	public function getFeeds() {
 		return response([
 			'success' => true,
-			'feeds' => Feed::where('active', 1)->select(['id', 'name', 'url', 'network', 'thumbnail'])->withCount('posts')->get()
+			'feeds' => Feed::where('active', 1)->get(['id', 'name', 'url', 'network', 'thumbnail'])
 		]);
 	}
 	public function getCategories() {
@@ -77,6 +77,18 @@ class PostController extends Controller
 		return response([
 			'date' => $last->created_at,
 			'posts' => $last->data['newPosts'] ?? 0
+		]);
+	}
+
+	public function getStatus() {
+		$last = Log::where('service', 'processAllFeeds')->latest()->first(['created_at', 'data', 'has_errors']);
+
+		$info = $last->created_at->setTimezone('Europe/Bratislava')->format('H:i');
+		if ($last->data['newPosts'])  $info .= " +{$last->data['newPosts']}";
+
+		return response([
+			'has_errors' => $last->has_errors,
+			'info' => $info
 		]);
 	}
 }

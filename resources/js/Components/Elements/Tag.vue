@@ -13,7 +13,7 @@ defineProps({
 </script>
 
 <template>
-	<span class="tag" :class="[`tag-${color}`, `tag-${solid ? 'solid' : 'light'}`, { clickable: clearable }]">
+	<span class="tag" :class="[`tag-${color}`, `tag-${solid ? 'solid' : 'light'}`, { isClickable: clearable }]">
 		<Icon v-if="icon" class="tag-icon" :name="icon" />
 		<span class="tag-text">
 			<slot />

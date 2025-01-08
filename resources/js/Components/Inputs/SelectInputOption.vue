@@ -11,7 +11,7 @@ defineProps({
 
 <template>
 	<li
-		class="dropdown-link flex ai-c clickable"
+		class="dropdown-link flex ai-c isClickable"
 		:class="{
 			isChecked: checked,
 			isDisabled: disabled,

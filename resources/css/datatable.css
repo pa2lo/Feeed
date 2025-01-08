@@ -2,6 +2,7 @@
 	font-size: 4.5rem;
 	color: var(--heading-color);
 	margin-top: 0.25rem;
+	margin-bottom: -0.25rem;
 }
 
 .table-top, .table-info {
@@ -20,7 +21,7 @@
 	text-align: left;
 }
 .dataTable-th, .dataTable-col {
-	padding: 0.5rem 0.875rem;
+	padding: 0.25rem 0.875rem;
 	height: 3rem;
 	line-height: 1.25;
 }
@@ -33,9 +34,46 @@
 }
 .dataTable-row, .dataTable-header-row {
 	border-bottom: 1px solid var(--border);
+	position: relative;
 }
-.dataTable-row:hover {
+.dataTable-row:not(.isDisabled, .isLoading):hover {
 	background: var(--link-lighter-bg);
+}
+
+.dataTable-row:is(.isDisabled, .isLoading) .dataTable-col:not(.dataTable-col-placeholder) {
+	pointer-events: none;
+	opacity: 0.6;
+}
+
+.dataTable-row.isDisabled {
+	cursor: not-allowed;
+}
+.dataTable-row.isLoading {
+	cursor: wait;
+}
+
+.dataTable-col-placeholder, .dataTable-th-placeholder {
+	width: 0;
+	padding: 0;
+}
+.dataTable-row:is(.isDisabled, .isLoading) .dataTable-col-placeholder::before {
+	content: '';
+	position: absolute;
+	inset: 0;
+	z-index: 2;
+}
+.dataTable-row.isLoading .dataTable-col-placeholder::after {
+	position: absolute;
+	content: '';
+	display: block;
+	left: calc(50% - 1em);
+	top: calc(50% - 1em);
+	width: 2em;
+	height: 2em;
+	border: 0.1875em solid var(--heading-color);
+	border-radius: 2em;
+	border-bottom-color: transparent;
+	animation: rotate 1s linear infinite;
 }
 
 .dataTable-col.isClickable {
@@ -51,21 +89,20 @@
 .dataTable-col-buttons {
 	width: 1rem;
 	white-space: nowrap;
-	padding: 0.25rem 0.75rem;
+	padding: 0.25rem 0.5rem;
 	text-align: right;
 }
 .dataTable-col-buttons > :is(.button, .ico-button):not(:last-child) {
 	margin-right: 0.125rem;
 }
 
-:is(.dataTable-col.ta-c, .dataTable-th-cb, .dataTable-col-cb) :is(.input-radio, .input-toggle, .input-cb) {
-	margin: 0 auto;
+.dataTable-col-input {
+	padding: .25rem;
 }
 
 .dataTable-col-cb {
 	width: 1rem;
 }
-
 .dataTable-th.isEmpty {
 	padding-inline: 0;
 }
@@ -82,6 +119,15 @@
 .dataTable-col-date {
 	min-width: 7rem;
 	width: 12rem;
+}
+
+:is(.dataTable-col.ta-c, .dataTable-th-cb, .dataTable-col-cb) :is(.input-radio, .input-toggle, .input-cb) {
+	margin: 0 auto;
+}
+
+.dataTable-col-input :is(.input, .input-number) {
+	padding-block: .40625rem;
+	line-height: 1.5;
 }
 
 .table-info > :is(.input-wrapper, .button) {

@@ -5,10 +5,14 @@ export function useAppForms(defaultData) {
 	const newForm = useForm(defaultData)
 	const editForm = useForm(defaultData)
 
-	const activeForm = ref(null)
+	const activeForm = ref({
+		type: 'newForm',
+		form: {}
+	})
 	const showModal = ref(false)
 
 	function showNewForm() {
+		newForm.reset()
 		newForm.clearErrors()
 		Object.assign(newForm, structuredClone(defaultData))
 		activeForm.value = {
@@ -19,6 +23,7 @@ export function useAppForms(defaultData) {
 	}
 
 	function showEditForm(data) {
+		editForm.reset()
 		editForm.clearErrors()
 		Object.assign(editForm, structuredClone(toRaw(data)))
 		activeForm.value = {

@@ -5,6 +5,7 @@
 	align-content: flex-start;
 	background-color: var(--link-lighter-bg);
 	border-radius: 0;
+	overflow: hidden;
 	transition: grid-template-rows .25s ease-in-out, background-color .25s, border-radius .15s, margin .25s, box-shadow .25s;
 }
 .details.open {
@@ -43,7 +44,6 @@
 	margin: 0 1rem;
 	min-height: 0;
 	display: block;
-	overflow: hidden;
 }
 .details-inner {
 	border-top: 1px solid var(--border);

@@ -9,7 +9,10 @@ const props = defineProps({
 	columns: Array,
 	items: Array,
 	modelField: String,
-	modelDisabled: Boolean
+	modelDisabled: Boolean,
+	hasModel: Boolean,
+	disabledRows: Array,
+	loadingRows: Array
 })
 
 function getAlignClass(col) {
@@ -24,17 +27,19 @@ function getAlignClass(col) {
 
 const tableCb = ref(null)
 
+const availableItems = computed(() => props.items.filter(i => !props.disabledRows.includes(i[props.modelField])).filter(i => !props.loadingRows.includes(i[props.modelField])))
+
 const proxyModel = computed({
 	get() {
-		if (props.items.every(i => model.value.includes(i[props.modelField]))) {
-			tableCb.value.setIndeterminate(false)
-			return true
+		if (availableItems.value.every(i => model.value.includes(i[props.modelField]))) {
+			tableCb.value?.setIndeterminate(false)
+			return availableItems.value.length ? true : false
 		}
 		if (tableCb.value) tableCb.value.setIndeterminate(props.items.some(i => model.value.includes(i[props.modelField])))
 		return false
 	},
 	set(val) {
-		if (val) model.value = props.items.reduce((acc, i) => {
+		if (val) model.value = availableItems.value.reduce((acc, i) => {
 			acc.push(i[props.modelField])
 			return acc
 		}, [])
@@ -46,11 +51,12 @@ const proxyModel = computed({
 <template>
 	<thead>
 		<tr class="dataTable-header-row">
+			<th v-if="modelField" class="dataTable-th-placeholder"></th>
 			<th
-				v-if="modelField"
+				v-if="hasModel && modelField"
 				class="dataTable-th dataTable-th-cb"
 			>
-				<SimpleCheckbox v-model="proxyModel" ref="tableCb" :disabled="modelDisabled" />
+				<SimpleCheckbox v-model="proxyModel" ref="tableCb" :disabled="modelDisabled || !availableItems.length" />
 			</th>
 			<th
 				v-for="col in columns"

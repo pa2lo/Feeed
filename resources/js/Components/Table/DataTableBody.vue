@@ -11,7 +11,10 @@ defineProps({
 	items: Array,
 	rowClick: Function,
 	modelField: String,
-	modelDisabled: Boolean
+	modelDisabled: Boolean,
+	hasModel: Boolean,
+	disabledRows: Array,
+	loadingRows: Array
 })
 
 function getAlignClass(col) {
@@ -31,15 +34,18 @@ function getAlignClass(col) {
 			v-for="item in items"
 			class="dataTable-row"
 			:class="{
-				isClickable: rowClick
+				isClickable: rowClick,
+				isDisabled: modelField && disabledRows.includes(item[modelField]),
+				isLoading: modelField && loadingRows.includes(item[modelField])
 			}"
 			@click="rowClick && rowClick(item)"
 		>
+			<th v-if="modelField" class="dataTable-col-placeholder"></th>
 			<td
-				v-if="modelField"
+				v-if="hasModel && modelField"
 				class="dataTable-col dataTable-col-cb"
 			>
-				<SimpleCheckbox v-model="model" :value="item[modelField]" :disabled="modelDisabled" />
+				<SimpleCheckbox v-model="model" :value="item[modelField]" :disabled="modelDisabled || disabledRows.includes(item[modelField]) || loadingRows.includes(item[modelField])" />
 			</td>
 			<td
 				v-for="col in columns"

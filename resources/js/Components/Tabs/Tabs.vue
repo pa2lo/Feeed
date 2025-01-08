@@ -6,6 +6,7 @@ import IcoButton from '@/Components/Elements/IcoButton.vue'
 
 const props = defineProps({
 	grow: Boolean,
+	center: Boolean,
 	variant: {
 		type: String,
 		default: 'underline'
@@ -19,6 +20,7 @@ const panelsCont = ref(null)
 const tabs = computed(() => {
 	return slots.default().reduce((arr, item) => {
 		if (item.type.__name == 'Tab') arr.push(item)
+		else if (item.children.some(ch => ch.type.__name == 'Tab')) arr.push(...item.children.filter(ch => ch.type.__name == 'Tab'))
 		return arr
 	}, [])
 })
@@ -31,38 +33,35 @@ function setTabByIndex(index, tab) {
 	if (tab && tab.props.disabled) return
 	activeTab.value = tab?.props?.id || index
 
+	scrollToTabIfNeeded()
+}
+
+function setTab(id) {
+	activeTab.value = id
+
+	scrollToTabIfNeeded()
+}
+
+function scrollToTabIfNeeded() {
 	if (isScrollable.value) {
 		requestAnimationFrame(() => {
 			let activeTabEl = tabsEl.value.querySelector('.tab.isActive')
 			if (!activeTabEl) return
 
 			activeTabEl.scrollIntoView({ block: 'nearest', inline: 'center' })
-
-			/*let activeTabOffset = activeTabEl.offsetLeft,
-				activeTabWidth = activeTabEl.clientWidth,
-				tabsScroll = tabsEl.value.scrollLeft,
-				tabsWidth = tabsEl.value.clientWidth
-
-			if (tabsScroll > 0 && activeTabOffset < tabsScroll + 32) tabsEl.value.scrollLeft = activeTabOffset - 48
-			else if (activeTabOffset + activeTabWidth + 32 > tabsScroll + tabsWidth) tabsEl.value.scrollLeft = activeTabOffset - tabsWidth + activeTabWidth + 48*/
 		})
 	}
 }
 
-function setTab(id) {
-	activeTab.value = id
-	// let newIndex = tabs.value.findIndex(tab => tab.props?.id == id)
-	// if (newIndex > -1) setTabByIndex(newIndex)
-}
-
 defineExpose({
-	getActiveTabIndex: activeTab.value,
+	getActiveTabId: () => activeTab.value,
 	setTab: setTab
 })
 
 let resizeObserver = null
 let isScrollable = ref(false)
 onMounted(() => {
+	if (tabs.value[0]?.props?.id) activeTab.value = tabs.value[0].props.id
 	resizeObserver = new ResizeObserver(entries => {
 		isScrollable.value = tabsEl.value.scrollWidth > tabsEl.value.clientWidth
 		setArrows()
@@ -124,7 +123,7 @@ function afterEnter(e) {
 
 <template>
 	<div class="tabs-cont" :class="{isDragging: isDragging, isBordered: variant != 'pill', line: variant != 'underline'}" @mousemove="onMousemove">
-		<div class="tabs flex ai-c" :class="[`tabs-${variant}`]" @mousedown="onMousedown" ref="tabsEl" @scroll="setArrows">
+		<div class="tabs flex ai-c" :class="[`tabs-${variant}`, {'tabs-centered': center}]" @mousedown="onMousedown" ref="tabsEl" @scroll="setArrows">
 			<button v-for="(tab, index) in tabs" @click="setTabByIndex(index, tab)" :disabled="tab.props.disabled" type="button" class="tab flex ai-c" :class="{isActive: typeof activeTab === 'number' ? activeTab == index : tab.props?.id == activeTab, grow: grow, isDisabled: tab.props.disabled}">
 				<component :is="tab.children?.trigger ?? 'span'" class="tab-inner">
 					<Icon v-if="tab.props.icon" class="tab-icon" :name="tab.props.icon" />

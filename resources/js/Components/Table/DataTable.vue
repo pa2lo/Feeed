@@ -16,7 +16,15 @@ const props = defineProps({
 		default: txt('data')
 	},
 	modelField: String,
-	modelDisabled: Boolean
+	modelDisabled: Boolean,
+	disabledRows: {
+		type: Array,
+		default: []
+	},
+	loadingRows: {
+		type: Array,
+		default: []
+	}
 })
 
 const slots = useSlots()
@@ -31,6 +39,8 @@ let columns = computed(() => {
 
 	return reducedArr
 })
+
+const hasModel = computed(() => model.value != undefined)
 </script>
 
 <template>
@@ -46,8 +56,8 @@ let columns = computed(() => {
 	<div v-else-if="columns" class="table-outer line">
 		<div class="dataTable-wrapper">
 			<table class="dataTable">
-				<DataTableHeaders :items :columns v-model="model" :modelField :modelDisabled />
-				<DataTableBody :items :columns :rowClick v-model="model" :modelField :modelDisabled />
+				<DataTableHeaders :items :columns v-model="model" :modelField :modelDisabled :hasModel :disabledRows :loadingRows />
+				<DataTableBody :items :columns :rowClick v-model="model" :modelField :modelDisabled :hasModel :disabledRows :loadingRows />
 			</table>
 		</div>
 	</div>

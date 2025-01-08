@@ -331,10 +331,10 @@ const filteredTableModel = computed(() => tableModel.value.filter(i => filteredI
 			<TableInfo v-if="items?.length" :count="filteredItems?.length" :countWords="['feed', 'feeds', 'feeds']">
 				<Button icon="filter" variant="outline" color="link" :disabled="[filterCategory, filterTitle, filterState, filterNetwork].some(f => f.length)" @click="showFilter = !showFilter">Filter</Button>
 				<template #buttons>
-					<Dropdown :disabled="!filteredTableModel.length || refreshingAll || refreshingIds.length > 0" variant="outline" color="link" :label="`Action${filteredTableModel.length ? ` (${filteredTableModel.length})` : ''}`">
+					<Dropdown :disabled="!filteredTableModel.length || refreshingIds.length > 0" variant="outline" color="link" :label="`Action${filteredTableModel.length ? ` (${filteredTableModel.length})` : ''}`">
 						<DropdownLink icon="eye-off" label="Disable selected" @click="switchSelectedActive(false)" :closeable="true" />
 						<DropdownLink icon="eye" label="Enable selected" @click="switchSelectedActive(true)" :closeable="true" />
-						<DropdownLink icon="refresh" label="Update selected" :disabled="!filteredTableModel.length || refreshingAll" @click="refreshSelectedFeeds" />
+						<DropdownLink icon="refresh" label="Update selected" :disabled="!filteredTableModel.length || refreshingIds.length > 0" @click="refreshSelectedFeeds" />
 						<DropdownLink icon="trash" label="Delete selected" @click="deleteMultiple" color="error" />
 					</Dropdown>
 					<Button :loading="refreshingAll" icon="refresh" color="link" variant="outline" @click.prevent="refreshAllFeeds" v-tooltip="'Active feeds only'">Update all</Button>
@@ -356,7 +356,7 @@ const filteredTableModel = computed(() => tableModel.value.filter(i => filteredI
 					<Tag v-if="filterNetwork" @click="filterNetwork = ''" clearable>Network: {{ filterNetwork }}</Tag>
 				</FilterTags>
 			</SlideToggle>
-			<DataTable :items="filteredItems" itemWord="feeds" v-model="tableModel" modelField="id" :modelDisabled="refreshingAll">
+			<DataTable :items="filteredItems" itemWord="feeds" v-model="tableModel" modelField="id" :loadingRows="refreshingIds">
 				<template #empty>
 					<Button v-if="filterTitle || filterState || filterCategory.length || filterNetwork" icon="x" variant="outline" @click="resetFilter">Reset filter</Button>
 					<Button v-else icon="plus" size="bigger" @click.prevent="showNewForm">Add feed</Button>
@@ -379,7 +379,7 @@ const filteredTableModel = computed(() => tableModel.value.filter(i => filteredI
 						<IcoButton v-if="data?.posts_count > 0" :disabled="removingId == data.id || refreshingIds.includes(data.id)" :link="`posts?feeds[]=${data.id}`" icon="article" v-tooltip="'Posts'" />
 						<IcoButton :link="data.url" icon="external-link" target="_blank" rel="noopener noreferrer" v-tooltip="'Open link'" />
 						<IcoButton :disabled="removingId == data.id || refreshingIds.includes(data.id)" icon="edit" v-tooltip="'Edit'" @click="showEditForm(data)" />
-						<IcoButton :disabled="removingId == data.id" :loading="refreshingIds.includes(data.id)" icon="refresh" v-tooltip="'Update'" @click="refreshFeed(data.id)" />
+						<IcoButton :disabled="removingId == data.id || refreshingIds.includes(data.id)" icon="refresh" v-tooltip="'Update'" @click="refreshFeed(data.id)" />
 						<IcoButton :disabled="refreshingIds.includes(data.id)" :loading="removingId == data.id" icon="trash" color="danger" v-tooltip="'Delete'" @click.stop="deleteItem(data)" />
 					</template>
 				</Column>

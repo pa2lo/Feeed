@@ -48,8 +48,11 @@
 	padding: 0;
 	height: 2rem;
 	width: 2rem;
-	border-radius: 1rem;
+	border-radius: .1875em;
 	opacity: var(--button-opacity, 1);
+}
+.ico-button.isCircle {
+	border-radius: 2em;
 }
 .ico-button-ico {
 	font-size: 1.25rem;

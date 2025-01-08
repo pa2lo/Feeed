@@ -14,7 +14,7 @@ const isOpen = ref(props.open ? true : false)
 
 <template>
 	<div class="details" :class="{open: isOpen}">
-		<div class="details-title flex ai-c clickable" @click="isOpen = !isOpen">
+		<div class="details-title flex ai-c isClickable" @click="isOpen = !isOpen">
 			<slot name="trigger">
 				<span class="details-title-text">{{ title }}</span>
 			</slot>

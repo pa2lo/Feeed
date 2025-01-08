@@ -13,6 +13,7 @@ import IcoButton from '@/Components/Elements/IcoButton.vue'
 defineProps({
 	header: String,
 	headerMeta: String,
+	subtitle: String,
 	backLink: String,
 	width: {
 		type: String,
@@ -39,24 +40,24 @@ const isiOS = /iPhone|iPad|iPod/.test(window.navigator?.userAgentData?.platform 
 <template>
 	<Head :title="headerMeta ?? header" />
 	<aside class="sidemenu-cont" :class="{menuOpen: menuOpen}">
-		<div class="sidemenu-backdrop l-hide clickable" @click="menuOpen = !menuOpen"></div>
+		<div class="sidemenu-backdrop l-hide isClickable" @click="menuOpen = !menuOpen"></div>
 		<nav class="sidemenu-menu flex">
 			<div class="sidemenu-logo flex ai-c">
 				<ApplicationLogo />
-				<Icon class="sidemenu-hide-x clickable ml-a l-hide" name="x" @click="menuOpen = !menuOpen" />
+				<Icon class="sidemenu-hide-x isClickable ml-a l-hide" name="x" @click="menuOpen = !menuOpen" />
 			</div>
-			<div class="divided">
+			<div class="sidemenu-group divided">
 				<MenuLink link="/feeds" icon="rss">Feeds</MenuLink>
 				<MenuLink link="/posts" icon="article">Posts</MenuLink>
 				<MenuLink link="/categories" icon="category">Categories</MenuLink>
 				<MenuLink link="/logs" icon="archive">Logs</MenuLink>
 				<MenuLink link="/settings" icon="settings">Settings</MenuLink>
 			</div>
-			<div class="line divided mb-a">
+			<div class="sidemenu-group divided">
 				<MenuLink v-if="$page.props?.auth?.user?.role == 'admin'" activeRoute="/users" link="/users" icon="users">User accounts</MenuLink>
 				<MenuLink link="/profile" icon="user-edit">Profile</MenuLink>
 			</div>
-			<div class="line divided sidemenu-footer flex ai-c">
+			<div class="sidemenu-footer divided flex ai-c">
 				<Button color="heading" size="compact" variant="outline" :icon="isDark ? 'sun' : 'moon'" bigIcon :title="isDark ? 'Light mode' : 'Dark mode'" @click="switchTheme" />
 				<Button color="link" size="compact" variant="outline" class="grow" link="/logout" icon="logout" method="post" as="button">Log Out</Button>
 			</div>
@@ -66,8 +67,9 @@ const isiOS = /iPhone|iPad|iPod/.test(window.navigator?.userAgentData?.platform 
 		<header class="authenticated-header flex ai-c">
 			<IcoButton v-if="backLink" icon="left" class="authenticated-header-back" :link="backLink" transparent />
 			<h1 class="page-title">{{ header ?? $page.component }}</h1>
-			<button class="menu-toggler flex aj-c clickable l-hide" @click="menuOpen = !menuOpen"><Icon name="menu" /></button>
+			<button class="menu-toggler flex aj-c isClickable l-hide" @click="menuOpen = !menuOpen"><Icon name="menu" /></button>
 		</header>
+		<div v-if="$slots.subtitle || subtitle" class="page-subtitle line"><slot name="subtitle"><p class="text-light">{{ subtitle }}</p></slot></div>
 		<main class="page-main section">
 			<div class="page-content">
 				<slot />

@@ -32,15 +32,15 @@ const paginationLinks = computed(() => {
 <template>
 	<div class="line pagination-container flex aj-c" v-if="pages > 1">
 		<div class="pagination flex aj-c">
-			<Link class="pagination-link clickable" :href="firstPage" title="First" :class="{noAction: currentPage == 1}"><Icon name="double-left" /></Link>
-			<Link class="pagination-link clickable" :href="prevPage || '#'" title="Previous" :class="{noAction: currentPage == 1}"><Icon name="left" /></Link>
+			<Link class="pagination-link" :href="firstPage" title="First" :class="{noAction: currentPage == 1}"><Icon name="double-left" /></Link>
+			<Link class="pagination-link" :href="prevPage || '#'" title="Previous" :class="{noAction: currentPage == 1}"><Icon name="left" /></Link>
 			<template v-for="(link, key) in paginationLinks">
 				<div v-if="link.active || link.url == null" class="pagination-link" :class="{active: link.active, disabled: link.url == null}">{{ link.label }}</div>
-				<Link v-else class="pagination-link clickable" :href="link.url">{{ link.label }}</Link>
+				<Link v-else class="pagination-link" :href="link.url">{{ link.label }}</Link>
 			</template>
-			<Link class="pagination-link clickable" :href="nextPage || '#'" title="Next" :class="{noAction: currentPage >= pages}"><Icon name="right" /></Link>
-			<Link class="pagination-link clickable" :href="lastPage" title="Last" :class="{noAction: currentPage >= pages}"><Icon name="double-right" /></Link>
+			<Link class="pagination-link" :href="nextPage || '#'" title="Next" :class="{noAction: currentPage >= pages}"><Icon name="right" /></Link>
+			<Link class="pagination-link" :href="lastPage" title="Last" :class="{noAction: currentPage >= pages}"><Icon name="double-right" /></Link>
 		</div>
-		<div v-if="from && to && total" class="pagination-info lh1 text-light ml-a">{{ from }} - {{ to }} / {{ total }}</div>
+		<div v-if="from && to && total" class="pagination-info lh1 text-light ml-a rm-hide">{{ from }} - {{ to }} / {{ total }}</div>
 	</div>
 </template>

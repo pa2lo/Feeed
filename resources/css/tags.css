@@ -21,6 +21,9 @@
 	margin: -.0625rem;
 	transition: opacity .1s;
 }
+.tag-text {
+	flex: 1;
+}
 
 .tag:not(:hover) .tag-x {
 	opacity: 0.6;

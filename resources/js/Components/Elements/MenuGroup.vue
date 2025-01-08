@@ -20,7 +20,7 @@ onBeforeMount(() => {
 
 <template>
 	<div class="menu-group" :class="{isOpen: open}">
-		<button class="menu-link flex ai-c clickable" @click="open = !open" :class="{isActive: isActive}">
+		<button class="menu-link flex ai-c" @click="open = !open" :class="{isActive: isActive}">
 			<Icon v-if="icon" class="menu-link-ico menu-link-ico-left" :name="icon" />
 			<span class="menu-link-text">
 				{{ title }}
