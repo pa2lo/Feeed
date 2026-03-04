@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Feed;
 use App\Models\Category;
 use App\Models\Log;
+use App\Models\Post;
 use GuzzleHttp\Cookie\CookieJar;
 use Illuminate\Http\Request;
 use voku\helper\HtmlDomParser;
@@ -29,19 +30,10 @@ class FeedController extends Controller
      */
     public function index() {
 		return inertia('Feeds/Index', [
-			'items' => Feed::with('categories:id')->withCount('posts')->get()->map(fn ($feed) => [
-				'id' => $feed->id,
-				'active' => $feed->active,
-				'name' => $feed->name,
-				'url' => $feed->url,
-				'network' => $feed->network,
-				'network_id' => $feed->network_id,
-				'thumbnail' => $feed->thumbnail,
-				'status' => $feed->status,
-				'downloaded_at' => $feed->downloaded_at,
-				'created_at' => $feed->created_at,
-				'categories' => $feed->categories->pluck('id'),
-				'posts_count' => $feed->posts_count
+			'postsCount' => Post::selectRaw('feed_id, COUNT(*) as total')->groupBy('feed_id')->pluck('total', 'feed_id'),
+			'items' => Feed::with('categories:id')->get()->map(fn ($feed) => [
+				...$feed->toArray(),
+				'categories' => $feed->categories->pluck('id')
 			]),
 			'categories' => Category::get(['id', 'name'])
 		]);

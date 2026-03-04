@@ -29,6 +29,7 @@ import SlideToggle from '@/Components/Elements/SlideToggle.vue'
 
 const props = defineProps({
 	items: Array,
+	postsCount: Object,
 	categories: Array
 })
 
@@ -68,8 +69,8 @@ const filteredItems = computed(() => {
 		if (filterSort.value == 'new') return b.id - a.id
 		if (filterSort.value == 'titleaz') return a.name.localeCompare(b.name)
 		if (filterSort.value == 'titleza') return b.name.localeCompare(a.name)
-		if (filterSort.value == 'postsdesc') return b.posts_count - a.posts_count
-		if (filterSort.value == 'postsasc') return a.posts_count - b.posts_count
+		if (filterSort.value == 'postsdesc') return props.postsCount[b.id] - props.postsCount[a.id]
+		if (filterSort.value == 'postsasc') return (props.postsCount[a.id] ?? 0) - (props.postsCount[b.id] ?? 0)
 	})
 	if (filterState.value) res = res.filter(item => {
 		if (filterState.value == 'active') return item.active
@@ -367,7 +368,11 @@ const filteredTableModel = computed(() => tableModel.value.filter(i => filteredI
 					</template>
 				</Column>
 				<Column header="Title" field="name" minWidth="7rem" :colClick="(data) => removingId != data.id && !refreshingIds.includes(data.id) && showEditForm(data)" />
-				<Column v-if="filteredItems.some(i => i.posts_count > 0)" field="posts_count" align="center" header="Posts" />
+				<Column align="center" header="Posts">
+					<template #default="{ data }">
+						{{ postsCount[data.id] ? postsCount[data.id] : '-' }}
+					</template>
+				</Column>
 				<Column header="Updated" field="downloaded_at" type="date" />
 				<Column header="Active" align="center">
 					<template #default="{ data }">
@@ -376,7 +381,7 @@ const filteredTableModel = computed(() => tableModel.value.filter(i => filteredI
 				</Column>
 				<Column type="buttons">
 					<template #default="{ data }">
-						<IcoButton v-if="data?.posts_count > 0" :disabled="removingId == data.id || refreshingIds.includes(data.id)" :link="`posts?feeds[]=${data.id}`" icon="article" v-tooltip="'Posts'" />
+						<IcoButton v-if="postsCount[data.id] > 0" :disabled="removingId == data.id || refreshingIds.includes(data.id)" :link="`posts?feeds[]=${data.id}`" icon="article" v-tooltip="'Posts'" />
 						<IcoButton :link="data.url" icon="external-link" target="_blank" rel="noopener noreferrer" v-tooltip="'Open link'" />
 						<IcoButton :disabled="removingId == data.id || refreshingIds.includes(data.id)" icon="edit" v-tooltip="'Edit'" @click="showEditForm(data)" />
 						<IcoButton :disabled="removingId == data.id || refreshingIds.includes(data.id)" icon="refresh" v-tooltip="'Update'" @click="refreshFeed(data.id)" />
@@ -438,7 +443,7 @@ const filteredTableModel = computed(() => tableModel.value.filter(i => filteredI
 			</template>
 			<template #buttons>
 				<Button v-if="activeForm?.type == 'editForm'" icon="refresh" variant="outline" color="link" :loading="refreshingIds.includes(activeForm?.form?.id)" @click.prevent="refreshFeed(activeForm?.form?.id)">Update</Button>
-				<Button v-if="activeForm?.form?.posts_count > 0" icon="article" :link="`posts?feeds[]=${activeForm?.form?.id}`" variant="outline" color="link" :disabled="refreshingIds.includes(activeForm?.form?.id)">{{ activeForm.form.posts_count }} posts</Button>
+				<Button v-if="postsCount?.[activeForm?.form?.id] > 0" icon="article" :link="`posts?feeds[]=${activeForm?.form?.id}`" variant="outline" color="link" :disabled="refreshingIds.includes(activeForm?.form?.id)">{{ postsCount?.[activeForm?.form?.id] }} posts</Button>
 				<Button type="submit" :loading="activeForm.form.processing" :disabled="refreshingIds.includes(activeForm?.form?.id)">Save feed</Button>
 			</template>
 		</Modal>
