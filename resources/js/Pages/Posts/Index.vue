@@ -83,6 +83,9 @@ const postTypes = [
 	}, {
 		title: 'Gallery',
 		value: 'gallery'
+	}, {
+		title: 'Sidecar',
+		value: 'sidecar'
 	}
 ]
 

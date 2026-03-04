@@ -141,6 +141,18 @@ class FeedController extends Controller
 
 		if ($feed->network == 'facebook') return response($this->fetchFBData($feed));
 		else if ($feed->network == 'instagram' && $igStrategy == 'account') return response($this->fetchIGDataByLogin($feed));
+		else if ($feed->network == 'instagram' && $igStrategy == 'apify') {
+			$res = $this->fetchIGDataByApify([$feed]);
+			if (!$res['success'] || isset($res['items'][0]['error'])) return response([
+				'success' => false,
+				'error' => isset($res['items'][0]['error']) ? $res['items'][0]['error'] : ($res['error'] ?? 'error getting data')
+			]);
+			return response([
+				'success' => true,
+				'processedPosts' => $res['items'][0]['processed'] ?? 0,
+				'newPosts' => $res['items'][0]['new'] ?? 0
+			]);
+		}
 		else if ($feed->network == 'instagram') return response($this->fetchIGDataBySrcaper($feed, $igStrategy, $dump));
 		else return response([
 			'success' => false
@@ -163,6 +175,50 @@ class FeedController extends Controller
 		$igStrategy = $igItems ? settingGet('ig_strategy', 'default') : null;
 
 		if ($igStrategy == 'account') $client = (new PendingRequest)->buildClient();
+
+		if ($igStrategy == 'apify') {
+			$apifyigfeeds = [];
+			$fbfeeds = [];
+			foreach ($feeds as $f) {
+				if ($f->network == 'instagram') $apifyigfeeds[] = $f;
+				else $fbfeeds[] = $f;
+			}
+			$feeds = $fbfeeds;
+		}
+
+		if ($apifyigfeeds) {
+			$apifyCount = count($apifyigfeeds);
+			$log[] = time() . " - start fetching apify - {$apifyCount} sites";
+			$res = $this->fetchIGDataByApify($apifyigfeeds);
+
+			if (!$res['success']) {
+				$hasErrors = true;
+				$log[] = time() . " - fetching apify error - {$res['error']}";
+			} else if (!isset($res['items']) || !count($res['items'])) {
+				$hasErrors = true;
+				$log[] = time() . " - fetching apify error - no items";
+			} else {
+				foreach ($res['items'] as $it) {
+					if (isset($it['error'])) {
+						$hasErrors = true;
+						$fetchErrors[$it['id']] = [
+							'url' => $it['url'],
+							'error' => $it['error']
+						];
+						$log[] = time() . " - fetching {$it['url']} error";
+						continue;
+					}
+
+					$text = $it['id']." - ".$it['url'];
+					if ($it['new'] ?? false) {
+						$newPosts += $it['new'];
+						$text .= " + {$it['new']} posts";
+					}
+					$successFeeds[] = $text;
+					$log[] = time() . " - fetching {$it['url']} success";
+				}
+			}
+		}
 
 		foreach ($feeds as $feed) {
 			if ($feed->network == 'instagram' && in_array($igStrategy, ['default', 'account'])) sleep(rand(5, 16));
@@ -635,6 +691,118 @@ class FeedController extends Controller
 				'success' => false,
 				'error' => $e->getMessage(),
 				'strategy' => $igStrategy
+			];
+		}
+	}
+	public function fetchIGDataByApify($feeds) {
+		$apifyToken = getScraperToken(count($feeds));
+		if (!$apifyToken) return [
+			'success' => false,
+			'error' => "Low apify credit"
+		];
+
+		$feedsMap = array_reduce($feeds, function($carry, $item) {
+			$carry[$item->url] = $item;
+			return $carry;
+		}, []);
+		$resList = [];
+
+		$requestBody = [
+			'addParentData' => false,
+			'directUrls' => array_reduce($feeds, function($carry, $item) {
+				$carry[] = $item->url;
+				return $carry;
+			}, []),
+			'resultsLimit' => 200,
+			'resultsType' => 'details'
+		];
+
+		try {
+			$request = Http::withHeaders([
+				'Content-Type' => 'application/json',
+				'Accept' => 'application/json',
+			])->withToken($apifyToken)->withBody(json_encode($requestBody))->timeout(180)->get("https://api.apify.com/v2/acts/apify~instagram-scraper/run-sync-get-dataset-items?restartOnError=false");
+
+			if ($apifyToken) incrementScraperToken($apifyToken, count($feeds));
+
+			if (!$request->ok() && $request->status() != 201) return [
+				'success' => false,
+				'error' => 'response '.$request->status(),
+			];
+
+			$resData = $request->json();
+
+			if (!isset($resData) || !count($resData)) return [
+				'success' => false,
+				'error' => "no data in response"
+			];
+
+			foreach ($resData as $index => $item) {
+				$model = $feedsMap[$item['url']];
+
+				$resList[$index] = [
+					'id' => $model->id,
+					'url' => $model->url,
+					'processed' => 0,
+					'new' => 0
+				];
+
+				if (!isset($item['latestPosts']) || !count($item['latestPosts'])) {
+					$resList[$index]['error'] = "no posts";
+					continue;
+				}
+
+				foreach ($item['latestPosts'] as $post) {
+					$postType = strtolower($post['type']);
+					if (!in_array($postType, ['image', 'video', 'sidecar'])) $postType = 'image';
+
+					$content = [
+						'text' => isset($post['caption']) ? $this->addIgLinks($post['caption']) : '',
+						'network_link' => $post['url'],
+						'shortcode' => $post['shortCode'],
+						'id' => $post['id'],
+						'comments' => $post['commentsCount'] ?? 0,
+						'likes' => $post['likesCount'] ?? 0,
+						'aspect-ratio' => "{$post['dimensionsWidth']}/{$post['dimensionsHeight']}",
+					];
+
+					if ($content['likes'] > 1000) $content['likes'] = round($content['likes'] / 1000, 1) . "K";
+
+					$content[$postType == 'video' ? 'thumbnail' : 'image'] = $this->getIGImageURI($post['displayUrl'], true);
+
+					if ($postType == 'video') {
+						$content['video'] = $this->getIGImageURI($post['videoUrl']);
+					} elseif ($postType == 'sidecar') {
+						$content['gallery'] = [];
+						foreach ($post['childPosts'] as $cp) {
+							$content['gallery'][] = [
+								'image' => $this->getIGImageURI($cp['displayUrl'], true),
+								'alt' => $cp['alt'] ?? ''
+							];
+						}
+					}
+
+					$newPost = $model->posts()->updateOrCreate([
+						'network_id' => "instagram-{$postType}-{$post['id']}"
+					], [
+						'type' => $postType,
+						'time' => strtotime($post['timestamp']),
+						'content' => $content,
+					]);
+
+					$resList[$index]['processed']++;
+					if ($newPost->wasRecentlyCreated) $resList[$index]['new']++;
+				}
+			}
+
+			return [
+				'success' => true,
+				'items' => $resList
+			];
+		} catch (\Exception $e) {
+			return [
+				'success' => false,
+				'error' => $e->getMessage()
 			];
 		}
 	}

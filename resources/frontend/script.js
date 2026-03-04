@@ -176,6 +176,11 @@ function renderPost(post) {
 				${g.hasMore ? `<span class="postGallery-plus">${g.hasMore}</span>` : ''}
 			</div>`).join('')}
 		`) : ''}
+		${post.type == 'sidecar' ? `<div class="postSidecar" style="--ar: ${post.content?.['aspect-ratio'] ?? 1};">
+			${post.content?.gallery?.map(g => `<div class="postSidecar-item">
+				${renderImage(g.image, 1, 'postSidecar-img', g.alt)}
+			</div>`).join('')}
+		</div>` : ''}
 		<div class="postMeta">
 			${renderLink('postMeta-link', post?.content?.network_link, `
 				${post?.content?.likes ? `<span class="postMeta-linkInner"><svg class="ico"><use href="#i-like" /></svg> ${post.content.likes}</span>` : ''}

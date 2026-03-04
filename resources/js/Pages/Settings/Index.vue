@@ -39,6 +39,9 @@ const igStrategyOptions = [
 	}, {
 		title: 'scrape.do',
 		value: 'scrapedo'
+	}, {
+		title: 'Apify Instagram Scraper',
+		value: 'apify'
 	}
 ]
 
@@ -81,7 +84,7 @@ function removeScraperKeyRow(i) {
 			<div class="line input-note-horizontal" v-if="form.ig_strategy == 'account'">
 				<Message type="warning"><strong>WARNING</strong> This strategy may result in your account being banned.</Message>
 			</div>
-			<template v-if="['webscrapingapi', 'proxiesapi', 'scrapedo'].includes(form.ig_strategy)">
+			<template v-if="['webscrapingapi', 'proxiesapi', 'scrapedo', 'apify'].includes(form.ig_strategy)">
 				<InputsRow v-for="(scraperKey, i) in form.scraper_keys" horizontal :label="`Scraper API key${form.scraper_keys.length > 1 ? ` ${i+1}` : ''}`" wrap>
 					<TextInput :required="i == 0" v-model="scraperKey.key" class="grow" :chars="34" />
 					<InputsRow class="grow">

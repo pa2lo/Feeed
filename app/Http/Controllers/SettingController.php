@@ -27,7 +27,7 @@ class SettingController extends Controller
 			settingSet('ig_strategy', 'account');
 			settingSet('ig_login', $request->ig_login);
 			settingSet('ig_pass', $request->ig_pass);
-		} else if (in_array($request->ig_strategy, ['webscrapingapi', 'proxiesapi', 'scrapedo'])) {
+		} else if (in_array($request->ig_strategy, ['webscrapingapi', 'proxiesapi', 'scrapedo', 'apify'])) {
 			$request->validate([
 				'scraper_keys' => 'required'
 			]);

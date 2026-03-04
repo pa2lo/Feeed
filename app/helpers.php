@@ -23,14 +23,14 @@ if (! function_exists('settingSet')) {
 }
 
 if (! function_exists('getScraperToken')) {
-	function getScraperToken() {
+	function getScraperToken($min = 6) {
 		$workingToken = null;
 
 		$keys = json_decode(settingGet('scraper_keys', "[]"), true);
 
 		if ($keys && count($keys) > 0) {
 			foreach ($keys as &$key) {
-				if (!$key['count'] || $key['count'] > 10) {
+				if (!$key['count'] || $key['count'] > ($min + 4)) {
 					$workingToken = $key['key'];
 					break;
 				}
@@ -42,12 +42,12 @@ if (! function_exists('getScraperToken')) {
 }
 
 if (! function_exists('incrementScraperToken')) {
-	function incrementScraperToken($id) {
+	function incrementScraperToken($id, $num = 1) {
 		$setting = Setting::find('scraper_keys');
 		$keys = json_decode($setting->value, true);
 		foreach ($keys as &$key) {
 			if ($key['key'] == $id) {
-				if ($key['count']) $key['count'] -= 1;
+				if ($key['count']) $key['count'] -= $num;
 				break;
 			}
 		}
