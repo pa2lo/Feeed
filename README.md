@@ -20,6 +20,6 @@ Development steps are described in [Skladnik](https://github.com/pa2lo/skladnik)
 Loading posts from Instagram supports multiple strategies:
 
 - using Instagram account
-- fetching data without logging (also supports proxiesapi, webscrapingapi and scrape.do)
+- fetching data without logging (also supports proxiesapi, webscrapingapi, scrape.do and apify)
 
 Preferred option and credentials / api keys can be set on Settings page.

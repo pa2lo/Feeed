@@ -63,11 +63,29 @@ function saveSettings() {
 function addScraperKeyRow() {
 	form.scraper_keys.push({
 		key: '',
-		count: ''
+		count: '',
+		reset: '',
+		resetDay: 1,
+		defaultCount: '',
 	})
 }
 function removeScraperKeyRow(i) {
 	form.scraper_keys.splice(i, 1)
+}
+
+const resetOptions = [ { title: 'Monthly', value: 'monthly' }, { title: 'Weekly', value: 'weekly' } ]
+const monthDaysOptions = Array.from({length: 31}, (k, v) => v+1).map(i => ({ title: i.toString(), value: i }))
+const weekDaysOptions = [
+	{ title: 'Monday', value: 1 },
+	{ title: 'Tuesday', value: 2 },
+	{ title: 'Wednesday', value: 3 },
+	{ title: 'Thursday', value: 4 },
+	{ title: 'Friday', value: 5 },
+	{ title: 'Saturday', value: 6 },
+	{ title: 'Sunday', value: 7 }
+]
+function onResetOptionChange(v, scraperKey) {
+	if (v == 'weekly' && scraperKey.resetDay > 7) scraperKey.resetDay = 7
 }
 </script>
 
@@ -85,14 +103,23 @@ function removeScraperKeyRow(i) {
 				<Message type="warning"><strong>WARNING</strong> This strategy may result in your account being banned.</Message>
 			</div>
 			<template v-if="['webscrapingapi', 'proxiesapi', 'scrapedo', 'apify'].includes(form.ig_strategy)">
-				<InputsRow v-for="(scraperKey, i) in form.scraper_keys" horizontal :label="`Scraper API key${form.scraper_keys.length > 1 ? ` ${i+1}` : ''}`" wrap>
-					<TextInput :required="i == 0" v-model="scraperKey.key" class="grow" :chars="34" />
-					<InputsRow class="grow">
-						<NumberInput v-model="scraperKey.count" class="grow" :min="0" :chars="6" />
-						<Button icon="x" v-tooltip="'Delete'" bigIcon color="danger" variant="outline" @click="removeScraperKeyRow(i)" v-if="form.scraper_keys.length > 1" />
+				<div v-for="(scraperKey, i) in form.scraper_keys" class="line divided">
+					<InputsRow horizontal :label="`Scraper API key${form.scraper_keys.length > 1 ? ` ${i+1}` : ''}`" wrap>
+						<TextInput :required="i == 0" v-model="scraperKey.key" class="grow" :chars="34" placeholder="key_xxxxxxxxxxxxxxx" />
+						<InputsRow class="grow">
+							<NumberInput placeholder="Count" v-model="scraperKey.count" class="grow" :min="0" :chars="6" :required="scraperKey.key ? true : false" />
+							<Button icon="x" v-tooltip="'Delete'" bigIcon color="danger" variant="outline" @click="removeScraperKeyRow(i)" v-if="form.scraper_keys.length > 1" />
+						</InputsRow>
 					</InputsRow>
-				</InputsRow>
-				<InputsRow horizontal>
+					<InputsRow horizontal :label="`API key${form.scraper_keys.length > 1 ? ` ${i+1}` : ''} reset`" wrap>
+						<SelectInput class="grow" :options="resetOptions" placeholder="Don't reset" allowEmpty v-model="scraperKey.reset" @change="(v) => onResetOptionChange(v, scraperKey)" />
+						<InputsRow v-if="scraperKey.reset" class="grow">
+							<SelectInput class="grow" placeholder="Select day" v-model="scraperKey.resetDay" :options="scraperKey.reset == 'monthly' ? monthDaysOptions : weekDaysOptions" required />
+							<NumberInput placeholder="Count" v-model="scraperKey.defaultCount" :min="0" :required="scraperKey.reset ? true : false" :chars="6" />
+						</InputsRow>
+					</InputsRow>
+				</div>
+				<InputsRow horizontal class="divided">
 					<Button class="grow" variant="outline" color="link" icon="plus" @click="addScraperKeyRow" full>Add key</Button>
 				</InputsRow>
 			</template>

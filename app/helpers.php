@@ -22,6 +22,32 @@ if (! function_exists('settingSet')) {
 	}
 }
 
+if (! function_exists('resetScraperTokens')) {
+	function resetScraperTokens() {
+		$keys = json_decode(settingGet('scraper_keys', "[]"), true);
+
+		$dayOfMonth = date('j');
+		$dayOfWeek = date('N');
+
+		$changed = 0;
+
+		if ($keys && count($keys) > 0) {
+			foreach ($keys as &$key) {
+				if (!isset($key['reset']) || !isset($key['resetDay'])) continue;
+
+				if (($key['reset'] == 'weekly' && $dayOfWeek == $key['resetDay']) || ($key['reset'] == 'monthly' && $dayOfMonth == $key['resetDay'])) {
+					$key['count'] = $key['defaultCount'];
+					$changed++;
+				}
+			}
+		}
+
+		if ($changed > 0) settingSet('scraper_keys', json_encode($keys));
+
+		return $changed;
+	}
+}
+
 if (! function_exists('getScraperToken')) {
 	function getScraperToken($min = 6) {
 		$workingToken = null;

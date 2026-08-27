@@ -50,14 +50,6 @@ Route::middleware('auth')->group(function () {
 
 	Route::get('/logs', [FeedController::class, 'logs']);
 
-	// component examples
-	Route::get('/components', fn() => inertia('Components/Inputs'));
-	Route::get('/components/buttons', fn() => inertia('Components/Buttons'));
-	Route::get('/components/tables', fn() => inertia('Components/Tables'));
-	Route::get('/components/modals', fn() => inertia('Components/Modals'));
-	Route::get('/components/cards', fn() => inertia('Components/Cards'));
-	Route::get('/components/other', fn() => inertia('Components/Other'));
-
 	// settings
 	Route::get('/settings', [SettingController::class, 'index']);
 	Route::post('/settings', [SettingController::class, 'update']);

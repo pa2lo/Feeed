@@ -152,8 +152,18 @@ class FeedController extends Controller
 	}
 
 	public function processAllFeeds() {
-		if (request()->feeds) $feeds = Feed::whereIn('id', request()->feeds)->get();
-		else $feeds = Feed::where('active', 1)->get();
+		if (request()->feeds) {
+			$feeds = Feed::whereIn('id', request()->feeds)->get();
+		} else {
+			$currentDate = date('Y-m-j');
+			$lastCheckedDay = settingGet('last-reset', '2026-01-01');
+			if ($lastCheckedDay != $currentDate) {
+				$resetTokens = resetScraperTokens();
+				settingSet('last-reset', $currentDate);
+			}
+
+			$feeds = Feed::where('active', 1)->get();
+		}
 
 		$action = request()->action ?? 'processAllFeeds';
 
@@ -178,7 +188,7 @@ class FeedController extends Controller
 			$feeds = $fbfeeds;
 		}
 
-		if ($apifyigfeeds) {
+		if (isset($apifyigfeeds) && $apifyigfeeds != []) {
 			$apifyCount = count($apifyigfeeds);
 			$log[] = time() . " - start fetching apify - {$apifyCount} sites";
 			$res = $this->fetchIGDataByApify($apifyigfeeds);
@@ -247,7 +257,7 @@ class FeedController extends Controller
 		$message = "Finished $action";
 		if ($hasErrors && count($fetchErrors) > 0) $message = $message.' with '.count($fetchErrors).' errors';
 
-		$log = Log::create([
+		$logData = [
 			'service' => $action,
 			'message' => $message,
 			'has_errors' => $hasErrors,
@@ -257,7 +267,11 @@ class FeedController extends Controller
 				'fetchErrors' => $fetchErrors,
 				'log' => $log
 			]
-		]);
+		];
+
+		if (isset($resetTokens) && $resetTokens > 0) $logData['data']['resetTokens'] = $resetTokens;
+
+		$log = Log::create($logData);
 
 		return response($log);
 	}

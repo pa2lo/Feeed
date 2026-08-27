@@ -69,6 +69,7 @@ function showPayload(data) {
 				<div>Message: <strong>{{ payloadData.message }}</strong></div>
 				<div>Has errors: <strong>{{ payloadData.has_errors ? 'true' : 'false' }}</strong></div>
 				<div v-if="payloadData?.data?.newPosts">New posts: <strong>{{ payloadData.data.newPosts }}</strong></div>
+				<div v-if="payloadData?.data?.resetTokens">Reset tokens: <strong>{{ payloadData.data.resetTokens }}</strong></div>
 			</div>
 			<div v-if="payloadData.data" class="line divided">
 				<Accordion v-if="payloadData.data.successFeeds?.length" :title="`Successfully updated feeds - ${payloadData.data.successFeeds?.length}`" pre open>
