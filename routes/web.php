@@ -50,6 +50,8 @@ Route::middleware('auth')->group(function () {
 
 	Route::get('/logs', [FeedController::class, 'logs']);
 
+	Route::get('/clearOldPosts', [PostController::class, 'clearOldPosts']);
+
 	// settings
 	Route::get('/settings', [SettingController::class, 'index']);
 	Route::post('/settings', [SettingController::class, 'update']);

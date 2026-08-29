@@ -127,6 +127,7 @@ const { showNewForm, showEditForm, activeForm, showModal } = useAppForms({
 	name: '',
 	url: '',
 	network: '',
+	thumbnail: '',
 	categories: [],
 	active: false
 })

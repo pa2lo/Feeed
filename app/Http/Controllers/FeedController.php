@@ -99,7 +99,8 @@ class FeedController extends Controller
 			'active' => $request->active,
 			'name' => $request->name,
 			'network' => $request->network,
-			'url' => $request->url
+			'url' => $request->url,
+			'thumbnail' => $request->thumbnail
 		]);
 
 		$feed->categories()->sync($request->categories);
@@ -745,6 +746,12 @@ class FeedController extends Controller
 
 			foreach ($resData as $index => $item) {
 				$model = $feedsMap[$item['url']];
+
+				$networkData = [
+					'network_id' => $item['id'] ?? null,
+					'thumbnail' => isset($item['profilePicUrlHD']) ? $this->getIGImageURI($item['profilePicUrlHD'], true) : null
+				];
+				$model->update($networkData);
 
 				$resList[$index] = [
 					'id' => $model->id,

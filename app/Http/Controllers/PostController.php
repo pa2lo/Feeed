@@ -7,6 +7,7 @@ use App\Models\Post;
 use App\Models\Category;
 use App\Models\Log;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 // use Illuminate\Support\Facades\Cache;
 
 class PostController extends Controller
@@ -90,5 +91,32 @@ class PostController extends Controller
 			'has_errors' => $last->has_errors,
 			'info' => $info
 		]);
+	}
+
+	public function clearOldPosts() {
+		$months = 4;
+
+		$limitTime = time() - ($months * 31 * 24 * 60 * 60);
+
+		$deletedFiles = 0;
+
+		foreach (['igimages', 'fbimages'] as $folder) {
+			$path = public_path($folder);
+			foreach (glob("$path/*") as $k => $file) {
+				if (!is_file($file)) continue;
+
+				$fileTime = filemtime($file);
+
+				if ($fileTime < $limitTime) {
+					unlink($file);
+					$deletedFiles++;
+				}
+			}
+		}
+
+		$deleteBefore = Carbon::now()->subMonths($months);
+		$deleted = Post::where('created_at', '<=', $deleteBefore)->delete();
+
+		return "files $deletedFiles - posts $deleted";
 	}
 }
